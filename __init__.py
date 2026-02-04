@@ -1,5 +1,6 @@
-from .client import AdpApiClient
-from .sessions import ApiSession
+"""ADP Workforce Now API Client"""
 
-__version__ = '1.0.0'
-__all__ = ['AdpApiClient', 'ApiSession']
+from client import AdpApiClient
+from sessions import ApiSession
+
+__all__ = ["AdpApiClient", "ApiSession"]
