@@ -64,4 +64,3 @@ print(len(workers))
 - Uses OData-style pagination (`$top`, `$skip`, `$select`) and stops on HTTP 204 (No Content).
 - `masked=False` requests `Accept: application/json;masked=false` (subject to tenant permissions).
 - Logging writes DEBUG output to `app.log` and to the console.
-```
