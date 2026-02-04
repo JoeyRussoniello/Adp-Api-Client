@@ -10,6 +10,7 @@ from logger import configure_logging
 
 logger = logging.getLogger(__name__)
 
+
 def main():
     configure_logging()
     # Load Environment Variables
@@ -31,7 +32,9 @@ def main():
 
     with AdpApiClient(client_id, client_secret, cert_path, key_path) as api:
         start_time = time.perf_counter()
-        workers = api.call_endpoint(endpoint, desired_cols, masked=False, max_requests = 1)
+        workers = api.call_endpoint(
+            endpoint, desired_cols, masked=False, max_requests=1
+        )
         end_time = time.perf_counter()
         logger.debug(f"Processed all workers in {(end_time - start_time):.2f} seconds.")
 
