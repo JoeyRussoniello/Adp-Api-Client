@@ -1,10 +1,10 @@
 import os
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import logging
 
@@ -31,7 +31,7 @@ class TestLoggingConfiguration(unittest.TestCase):
         """Test basic logging configuration."""
         # Reset handlers
         self.root_logger.handlers = []
-        
+
         configure_logging()
 
         # Check that logger is configured
@@ -42,13 +42,12 @@ class TestLoggingConfiguration(unittest.TestCase):
         """Test that file handler is configured."""
         # Reset handlers
         self.root_logger.handlers = []
-        
+
         configure_logging()
 
         # Check for file handler
         file_handlers = [
-            h for h in self.root_logger.handlers
-            if isinstance(h, logging.FileHandler)
+            h for h in self.root_logger.handlers if isinstance(h, logging.FileHandler)
         ]
         self.assertGreater(len(file_handlers), 0)
 
@@ -57,13 +56,12 @@ class TestLoggingConfiguration(unittest.TestCase):
         """Test that console handler is configured."""
         # Reset handlers
         self.root_logger.handlers = []
-        
+
         configure_logging()
 
         # Check for console handler
         console_handlers = [
-            h for h in self.root_logger.handlers
-            if isinstance(h, logging.StreamHandler)
+            h for h in self.root_logger.handlers if isinstance(h, logging.StreamHandler)
         ]
         self.assertGreater(len(console_handlers), 0)
 
@@ -72,7 +70,7 @@ class TestLoggingConfiguration(unittest.TestCase):
         """Test that logging level is set to DEBUG."""
         # Reset handlers
         self.root_logger.handlers = []
-        
+
         configure_logging()
 
         # Check that debug level is set

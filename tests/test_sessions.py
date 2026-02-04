@@ -1,12 +1,12 @@
 import os
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import requests
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sessions import ApiSession, RequestMethod
 
@@ -116,7 +116,7 @@ class TestGetRequestFunction(unittest.TestCase):
         """Test getting unsupported request function raises error."""
         with self.assertRaises(ValueError) as context:
             self.api_session._get_request_function("INVALID")
-        
+
         self.assertIn("Unsupported method", str(context.exception))
 
 
@@ -162,7 +162,9 @@ class TestRequest(unittest.TestCase):
 
     def test_request_exception_handling(self):
         """Test request exception handling."""
-        self.mock_session.get.side_effect = requests.RequestException("Connection failed")
+        self.mock_session.get.side_effect = requests.RequestException(
+            "Connection failed"
+        )
 
         with self.assertRaises(requests.RequestException):
             self.api_session._request("http://example.com", RequestMethod.GET)

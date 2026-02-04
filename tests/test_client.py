@@ -2,15 +2,15 @@ import os
 import sys
 import time
 import unittest
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, patch
 
 import requests
 from requests.adapters import HTTPAdapter
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from client import DEFAULT_TIMEOUT, TOKEN_BUFFER_SECONDS, AdpApiClient
+from client import AdpApiClient
 
 
 class TestAdpApiClientInitialization(unittest.TestCase):
@@ -43,7 +43,9 @@ class TestAdpApiClientInitialization(unittest.TestCase):
         """Test initialization fails with missing credentials."""
         with self.assertRaises(ValueError) as context:
             AdpApiClient("", self.client_secret, self.cert_path, self.key_path)
-        self.assertIn("All credentials and paths must be provided", str(context.exception))
+        self.assertIn(
+            "All credentials and paths must be provided", str(context.exception)
+        )
 
     @patch("os.path.exists")
     def test_initialization_missing_cert_file(self, mock_exists):
@@ -83,12 +85,12 @@ class TestTokenManagement(unittest.TestCase):
     def test_get_token_success(self, mock_post, mock_exists):
         """Test successful token acquisition."""
         mock_exists.return_value = True
-        
+
         # Create a mock response with proper setup
         mock_response = MagicMock()
         mock_response.json.return_value = {
             "access_token": "test_token_123",
-            "expires_in": 3600
+            "expires_in": 3600,
         }
         mock_response.raise_for_status = MagicMock()
         mock_post.return_value = mock_response
@@ -96,7 +98,7 @@ class TestTokenManagement(unittest.TestCase):
         client = AdpApiClient(
             self.client_id, self.client_secret, self.cert_path, self.key_path
         )
-        
+
         # Verify token and expiration were set
         self.assertIsNotNone(client.token)
         self.assertTrue(client.token_expires_at > 0)
@@ -111,10 +113,10 @@ class TestTokenManagement(unittest.TestCase):
         client = AdpApiClient(
             self.client_id, self.client_secret, self.cert_path, self.key_path
         )
-        
+
         # Set expiration time to future
         client.token_expires_at = time.time() + 3600
-        
+
         self.assertFalse(client._is_token_expired())
 
     @patch("os.path.exists")
@@ -127,10 +129,10 @@ class TestTokenManagement(unittest.TestCase):
         client = AdpApiClient(
             self.client_id, self.client_secret, self.cert_path, self.key_path
         )
-        
+
         # Set expiration time to past
         client.token_expires_at = time.time() - 100
-        
+
         self.assertTrue(client._is_token_expired())
 
     @patch("os.path.exists")
@@ -143,16 +145,16 @@ class TestTokenManagement(unittest.TestCase):
         client = AdpApiClient(
             self.client_id, self.client_secret, self.cert_path, self.key_path
         )
-        
+
         # Expire the token
         client.token_expires_at = time.time() - 100
-        
+
         # Reset mock to track new calls
         mock_get_token.reset_mock()
         mock_get_token.return_value = "refreshed_token"
-        
+
         client._ensure_valid_token()
-        
+
         mock_get_token.assert_called_once()
 
 
@@ -188,9 +190,9 @@ class TestRequestHeaders(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         headers = client._get_headers(masked=True)
-        
+
         self.assertEqual(headers["Authorization"], "Bearer test_token")
         self.assertEqual(headers["Accept"], "application/json")
 
@@ -204,9 +206,9 @@ class TestRequestHeaders(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         headers = client._get_headers(masked=False)
-        
+
         self.assertEqual(headers["Authorization"], "Bearer test_token")
         self.assertEqual(headers["Accept"], "application/json;masked=false")
 
@@ -237,13 +239,13 @@ class TestContextManager(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         # Mock the session.close method
         client.session.close = MagicMock()
-        
+
         with client:
             pass
-        
+
         client.session.close.assert_called_once()
 
 
@@ -260,10 +262,10 @@ class TestCallEndpoint(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         with self.assertRaises(ValueError) as context:
             client.call_endpoint("invalid_endpoint", ["col1", "col2"])
-        
+
         self.assertIn("Incorrect Endpoint Received", str(context.exception))
 
     @patch("os.path.exists")
@@ -276,19 +278,21 @@ class TestCallEndpoint(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         # Mock the ApiSession
         with patch("client.ApiSession") as mock_api_session:
             mock_session_instance = MagicMock()
             mock_api_session.return_value = mock_session_instance
-            
+
             # Mock response
             mock_response = MagicMock()
             mock_response.status_code = 204
             mock_session_instance.get.return_value = mock_response
-            
-            result = client.call_endpoint("/hr/v2/workers", ["col1", "col2"], max_requests=1)
-            
+
+            result = client.call_endpoint(
+                "/hr/v2/workers", ["col1", "col2"], max_requests=1
+            )
+
             self.assertIsInstance(result, list)
 
     @patch("os.path.exists")
@@ -301,18 +305,20 @@ class TestCallEndpoint(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         with patch("client.ApiSession") as mock_api_session:
             mock_session_instance = MagicMock()
             mock_api_session.return_value = mock_session_instance
-            
+
             mock_response = MagicMock()
             mock_response.status_code = 204
             mock_session_instance.get.return_value = mock_response
-            
+
             # Request page size of 500 (should be capped at 100)
-            client.call_endpoint("/hr/v2/workers", ["col1"], page_size=500, max_requests=1)
-            
+            client.call_endpoint(
+                "/hr/v2/workers", ["col1"], page_size=500, max_requests=1
+            )
+
             # Check that set_params was called with $top=100
             mock_session_instance.set_params.assert_called()
             call_args = mock_session_instance.set_params.call_args[0][0]
@@ -334,7 +340,7 @@ class TestErrorHandling(unittest.TestCase):
     def test_token_request_no_token_in_response(self, mock_post, mock_exists):
         """Test handling of token response without access_token."""
         mock_exists.return_value = True
-        
+
         mock_response = MagicMock()
         mock_response.json.return_value = {}  # No access_token
         mock_response.raise_for_status = MagicMock()
@@ -344,7 +350,7 @@ class TestErrorHandling(unittest.TestCase):
             AdpApiClient(
                 self.client_id, self.client_secret, self.cert_path, self.key_path
             )
-        
+
         self.assertIn("No access token in response", str(context.exception))
 
     @patch("os.path.exists")
@@ -357,16 +363,16 @@ class TestErrorHandling(unittest.TestCase):
         client = AdpApiClient(
             "test_client", "test_secret", "test_cert.pem", "test_key.key"
         )
-        
+
         with patch("client.ApiSession") as mock_api_session:
             mock_session_instance = MagicMock()
             mock_api_session.return_value = mock_session_instance
-            
+
             mock_response = MagicMock()
             mock_response.status_code = 200
             mock_response.json.side_effect = ValueError("Invalid JSON")
             mock_session_instance.get.return_value = mock_response
-            
+
             with self.assertRaises(ValueError):
                 client.call_endpoint("/hr/v2/workers", ["col1"])
 
