@@ -5,8 +5,8 @@ import time
 
 from dotenv import load_dotenv
 
-from client import AdpApiClient
-from logger import configure_logging
+from adpapi.client import AdpApiClient
+from adpapi.logger import configure_logging
 
 logger = logging.getLogger(__name__)
 

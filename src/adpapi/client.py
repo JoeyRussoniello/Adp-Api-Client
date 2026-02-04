@@ -8,7 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from sessions import ApiSession
+from adpapi.sessions import ApiSession
 
 logger = logging.getLogger(__name__)
 

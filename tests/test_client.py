@@ -10,7 +10,7 @@ from requests.adapters import HTTPAdapter
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from client import AdpApiClient
+from adpapi.client import AdpApiClient
 
 
 class TestAdpApiClientInitialization(unittest.TestCase):

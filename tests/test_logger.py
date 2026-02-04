@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import logging
 
-from logger import configure_logging
+from adpapi.logger import configure_logging
 
 
 class TestLoggingConfiguration(unittest.TestCase):
