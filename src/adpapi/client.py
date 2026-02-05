@@ -106,17 +106,18 @@ class AdpApiClient:
         accept = "application/json"
         if not masked:
             accept += ";masked=false"
-            logging.debug(f'Calling _get_headers with accept = {accept}')
-            
+            logging.debug(f"Calling _get_headers with accept = {accept}")
+
         headers = {
             "Authorization": f"Bearer {self.token}",
             "Accept": accept,
         }
-        
-        return headers 
 
-    def get_masked_headers(self) -> Dict[str,str]:
+        return headers
+
+    def get_masked_headers(self) -> Dict[str, str]:
         return self._get_headers(True)
+
     def get_unmasked_headers(self) -> Dict[str, str]:
         return self._get_headers(False)
 
@@ -172,13 +173,15 @@ class AdpApiClient:
         select = ",".join(cols)
         skip = 0
         url = self.base_url + endpoint
-        
+
         if masked:
             get_headers_fn = self.get_masked_headers
         else:
             get_headers_fn = self.get_unmasked_headers
-        
-        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
+
+        call_session = ApiSession(
+            self.session, self.cert, get_headers_fn, timeout=timeout
+        )
         while True:
             params = {
                 "$top": page_size,
