@@ -19,14 +19,16 @@ class RequestMethod(StrEnum):
 class ApiSession:
     session: requests.Session
     cert: tuple[str, str]
+    get_headers: Optional[Callable[[], dict]] = None
     headers: Optional[dict] = None
     params: Optional[dict] = None
     timeout: int = 30
     data: Optional[Any] = None
 
     def __post_init__(self):
-        if self.headers is None:
-            self.headers = {}
+        if self.get_headers is None:
+            # Default to empty header generation
+            self.get_headers = lambda: {}
         if self.params is None:
             self.params = {}
 
@@ -65,9 +67,11 @@ class ApiSession:
             requests.RequestException: If request fails
         """
         request_fn = self._get_request_function(method)
+        # Generate headers on call time for up-to-date token
+        headers = self.get_headers()
         try:
             kwargs = {
-                "headers": self.headers,
+                "headers": headers,
                 "params": self.params,
                 "cert": self.cert,
                 "timeout": self.timeout,

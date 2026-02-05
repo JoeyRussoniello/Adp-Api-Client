@@ -115,6 +115,11 @@ class AdpApiClient:
         
         return headers 
 
+    def get_masked_headers(self) -> Dict[str,str]:
+        return self._get_headers(True)
+    def get_unmasked_headers(self) -> Dict[str, str]:
+        return self._get_headers(False)
+
     def call_endpoint(
         self,
         endpoint: str,
@@ -167,8 +172,13 @@ class AdpApiClient:
         select = ",".join(cols)
         skip = 0
         url = self.base_url + endpoint
-        headers = self._get_headers(masked)
-        call_session = ApiSession(self.session, self.cert, headers, timeout=timeout)
+        
+        if masked:
+            get_headers_fn = self.get_masked_headers
+        else:
+            get_headers_fn = self.get_unmasked_headers
+        
+        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
         while True:
             params = {
                 "$top": page_size,
@@ -177,7 +187,6 @@ class AdpApiClient:
             }
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
-
             response = call_session.get(url)
 
             if response.status_code == 204:
