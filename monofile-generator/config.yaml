@@ -1,0 +1,7 @@
+# Monofile generation configuration
+# Specifies the order of modules in the generated notebook
+
+module_order:
+  - logger.py
+  - sessions.py
+  - client.py
