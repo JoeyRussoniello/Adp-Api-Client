@@ -64,3 +64,18 @@ print(len(workers))
 - Uses OData-style pagination (`$top`, `$skip`, `$select`) and stops on HTTP 204 (No Content).
 - `masked=False` requests `Accept: application/json;masked=false` (subject to tenant permissions).
 - Logging writes DEBUG output to `app.log` and to the console.
+
+## `Monofile.ipynb`
+
+For clients such as Microsoft Fabric, Azure Databricks, or other notebook-driven programming environments, running a single notebook with magic commands may be more efficient than creating a custom runtime with the `pip` version of the package. To allow for this, [`monofile.ipynb`](./monofile.ipynb) can simply be uploaded to the desired location and ran there. 
+
+Import Syntax Changes to
+
+```python
+%run monofile.ipynb # Or whatever monofile has been renamed to in the notebook client
+
+# Now, imports are no longer necessary and the top-level Api objects are exposed at top-level
+configure_logging()
+with AdpApiClient(...) as api:
+    api.call_endpoint(...)
+```
