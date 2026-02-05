@@ -1,81 +1,66 @@
-import os
-import sys
-import unittest
+import logging
 from unittest.mock import patch
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-import logging
+import pytest
 
 from adpapi.logger import configure_logging
 
 
-class TestLoggingConfiguration(unittest.TestCase):
+@pytest.fixture
+def clean_logger():
+    """Provide a clean logger with saved state for restoration."""
+    root_logger = logging.getLogger()
+    original_handlers = root_logger.handlers[:]
+    original_level = root_logger.level
+
+    yield root_logger
+
+    # Restore original state
+    root_logger.handlers = original_handlers
+    root_logger.setLevel(original_level)
+
+
+class TestLoggingConfiguration:
     """Test logger configuration."""
 
-    def setUp(self):
-        """Set up test fixtures."""
-        # Get the root logger
-        self.root_logger = logging.getLogger()
-        # Store original handlers
-        self.original_handlers = self.root_logger.handlers[:]
-
-    def tearDown(self):
-        """Clean up after tests."""
-        # Restore original handlers
-        self.root_logger.handlers = self.original_handlers
-
     @patch("builtins.open", create=True)
-    def test_configure_logging_basic(self, mock_open):
-        """Test basic logging configuration."""
-        # Reset handlers
-        self.root_logger.handlers = []
+    def test_configure_logging_basic(self, mock_open, clean_logger):
+        """Test basic logging configuration adds handlers."""
+        clean_logger.handlers = []
 
         configure_logging()
 
-        # Check that logger is configured
-        self.assertGreater(len(self.root_logger.handlers), 0)
+        assert len(clean_logger.handlers) > 0
 
     @patch("builtins.open", create=True)
-    def test_configure_logging_file_handler(self, mock_open):
+    def test_configure_logging_file_handler(self, mock_open, clean_logger):
         """Test that file handler is configured."""
-        # Reset handlers
-        self.root_logger.handlers = []
+        clean_logger.handlers = []
 
         configure_logging()
 
-        # Check for file handler
         file_handlers = [
-            h for h in self.root_logger.handlers if isinstance(h, logging.FileHandler)
+            h for h in clean_logger.handlers if isinstance(h, logging.FileHandler)
         ]
-        self.assertGreater(len(file_handlers), 0)
+        assert len(file_handlers) > 0
 
     @patch("builtins.open", create=True)
-    def test_configure_logging_console_handler(self, mock_open):
+    def test_configure_logging_console_handler(self, mock_open, clean_logger):
         """Test that console handler is configured."""
-        # Reset handlers
-        self.root_logger.handlers = []
+        clean_logger.handlers = []
 
         configure_logging()
 
-        # Check for console handler
         console_handlers = [
-            h for h in self.root_logger.handlers if isinstance(h, logging.StreamHandler)
+            h for h in clean_logger.handlers if isinstance(h, logging.StreamHandler)
         ]
-        self.assertGreater(len(console_handlers), 0)
+        assert len(console_handlers) > 0
 
     @patch("builtins.open", create=True)
-    def test_configure_logging_debug_level(self, mock_open):
+    def test_configure_logging_debug_level(self, mock_open, clean_logger):
         """Test that logging level is set to DEBUG."""
-        # Reset handlers
-        self.root_logger.handlers = []
+        clean_logger.handlers = []
 
         configure_logging()
 
-        # Check that debug level is set
-        self.assertEqual(self.root_logger.level, logging.DEBUG)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert clean_logger.level == logging.DEBUG
