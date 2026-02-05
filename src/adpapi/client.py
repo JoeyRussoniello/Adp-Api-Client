@@ -124,10 +124,10 @@ class AdpApiClient:
     def call_endpoint(
         self,
         endpoint: str,
-        cols: List[str],
-        masked: bool = True,
-        timeout: int = DEFAULT_TIMEOUT,
-        page_size: int = 100,
+        cols: Optional[List[str]] = None,
+        masked: Optional[bool] = True,
+        timeout: Optional[int] = DEFAULT_TIMEOUT,
+        page_size: Optional[int] = 100,
         max_requests: Optional[int] = None,
     ) -> List[Dict]:
         """Call any Registered ADP Endpoint
@@ -169,6 +169,8 @@ class AdpApiClient:
             )
 
         # Output/Request Initialization
+        if cols is None:
+            cols = []
         output = []
         select = ",".join(cols)
         skip = 0
@@ -186,8 +188,12 @@ class AdpApiClient:
             params = {
                 "$top": page_size,
                 "$skip": skip,
-                "$select": select,
             }
+            
+            if select:
+                params['$select'] = select
+                
+            logger.debug(f'Requesting with params: {params}')
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
             response = call_session.get(url)
