@@ -38,12 +38,6 @@ class AdpApiClient:
         self.token = None
         self.token_expires_at = 0
 
-        try:
-            self.token = self._get_token()
-        except Exception as e:
-            logger.error(f"Failed to get token during client initialization: {e}")
-            raise
-
     @property
     def payload(self) -> Dict[str, str]:
         return {
@@ -102,7 +96,7 @@ class AdpApiClient:
 
     def _ensure_valid_token(self, timeout: int = DEFAULT_TIMEOUT):
         """Refresh token if expired."""
-        if self._is_token_expired():
+        if self.token is None or self._is_token_expired():
             logger.debug("Token expired, refreshing...")
             self.token = self._get_token(timeout)
 
