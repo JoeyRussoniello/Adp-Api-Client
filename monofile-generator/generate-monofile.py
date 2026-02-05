@@ -2,8 +2,6 @@
 """Generate a consolidated monofile notebook from src/adpapi modules."""
 
 import json
-import os
-import re
 from pathlib import Path
 from typing import List, Set, Tuple
 
