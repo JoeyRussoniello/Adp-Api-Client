@@ -3,5 +3,6 @@
 
 module_order:
   - logger.py
+  - odata_filters.py
   - sessions.py
   - client.py

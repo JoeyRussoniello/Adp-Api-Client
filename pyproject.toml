@@ -1,6 +1,6 @@
 [project]
 name = "adpapi"
-version = "1.0.1"
+version = "1.1.0"
 description = "Add your description here"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
@@ -32,7 +32,10 @@ where = ["src"]
 
 [dependency-groups]
 dev = [
-    "pyyaml>=6.0.3", 'pytest>=7.0.0', 'pytest-cov>=4.0.0',
+    "pyyaml>=6.0.3",
+    'pytest>=7.0.0',
+    'pytest-cov>=4.0.0',
+    "build>=1.4.0",
 ]
 optional = [
     'black>=22.0.0', 'flake8>=4.0.0'
