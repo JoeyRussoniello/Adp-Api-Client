@@ -95,14 +95,14 @@ class TestFields:
         assert field.to_odata() == "Name"
 
     def test_field_with_dot_notation(self):
-        """Nested properties should use dot notation."""
+        """Nested properties with dot notation should convert to forward slashes per OData v4."""
         field = Field("Person.Name.First")
-        assert field.to_odata() == "Person.Name.First"
+        assert field.to_odata() == "Person/Name/First"
 
     def test_field_with_deep_nesting(self):
-        """Deeply nested paths should work."""
-        field = Field("worker.person.legalName.givenName")
-        assert field.to_odata() == "worker.person.legalName.givenName"
+        """Deeply nested paths should convert dots to forward slashes."""
+        field = Field("workers.workAssignments.reportsTo.positionID")
+        assert field.to_odata() == "workers/workAssignments/reportsTo/positionID"
 
 
 # ============================================================================
@@ -542,8 +542,8 @@ class TestODataCompliance:
             assert "!=" not in result
 
     def test_field_paths_follow_odata_convention(self):
-        """Field paths should use forward slash or dot notation."""
-        # OData uses forward slash, but this implementation uses dot
+        """Field paths should use forward slash notation per OData v4 spec."""
+        # OData v4 uses forward slash for navigation properties
         field = Field("Person.Address.City")
-        assert field.to_odata() == "Person.Address.City"
-        assert "/" not in field.to_odata()  # Uses dot, not slash
+        assert field.to_odata() == "Person/Address/City"
+        assert "." not in field.to_odata()  # Dots converted to slashes
