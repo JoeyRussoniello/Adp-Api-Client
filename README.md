@@ -51,7 +51,7 @@ with AdpApiClient(
 ) as api:
     workers = api.call_endpoint(
         endpoint="/hr/v2/workers",
-        cols=cols,
+        select=cols,
         masked=True,       # set False to request unmasked fields if your tenant allows it
         page_size=100,     # ADP max
         max_requests=1,    # increase/remove for full exports
@@ -86,7 +86,7 @@ filter4 = FilterExpression.field("workers.person.legalName.familyName").contains
 workers = api.call_endpoint(
     endpoint="/hr/v2/workers",
     filters=filter2,
-    cols=cols,
+    select=cols,
     masked=True,
 )
 ```
