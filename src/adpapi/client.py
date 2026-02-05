@@ -2,12 +2,13 @@ import json
 import logging
 import os
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from adpapi.odata_filters import FilterExpression
 from adpapi.sessions import ApiSession
 
 logger = logging.getLogger(__name__)
@@ -121,10 +122,52 @@ class AdpApiClient:
     def get_unmasked_headers(self) -> Dict[str, str]:
         return self._get_headers(False)
 
+    def _handle_filters(self, filters: Optional[Union[str, FilterExpression]] = None) -> str:
+        """Convert filter input (string or FilterExpression) to OData string.
+        
+        Args:
+            filters: Filter as string or FilterExpression object, or None
+            
+        Returns:
+            OData filter string, or empty string if no filters
+        """
+        if filters is None:
+            return ""
+        elif isinstance(filters, str):
+            try:
+                filters = FilterExpression.from_string(filters)
+            except ValueError as e:
+                logger.error(f'Error parsing filter expression: {filters}')
+                raise
+        
+        # Remove outer parentheses added by BinaryOp if present
+        # ! COULD BE MOVED TO THE FILTEREXPRESSION OBJECT
+        odata_str = filters.to_odata()
+        if odata_str.startswith("(") and odata_str.endswith(")"):
+            odata_str = odata_str[1:-1]
+        return odata_str
+    def _clean_endpoint(self, endpoint: str) -> str:
+        starts_with_base = endpoint.startswith(self.base_url)
+        starts_with_path = endpoint.startswith("/")
+
+        if not (starts_with_base or starts_with_path):
+            logger.error(f"Incorrect Endpoint Received {endpoint}")
+            raise ValueError(f"Incorrect Endpoint Received: {endpoint}")
+
+        if starts_with_base:
+            endpoint = endpoint.split(self.base_url)[1]
+            logger.warning(
+                "Full URL Specification not needed, prefer to use the endpoint string.\n"
+                f"(Ex: Prefer {endpoint} over {self.base_url}{endpoint})."
+            ) 
+
+        return endpoint
+        
     def call_endpoint(
         self,
         endpoint: str,
         cols: Optional[List[str]] = None,
+        filters: Optional[Union[str, FilterExpression]] = None,
         masked: Optional[bool] = True,
         timeout: Optional[int] = DEFAULT_TIMEOUT,
         page_size: Optional[int] = 100,
@@ -154,27 +197,18 @@ class AdpApiClient:
             )
             page_size = 100
 
-        starts_with_base = endpoint.startswith(self.base_url)
-        starts_with_path = endpoint.startswith("/")
-
-        if not (starts_with_base or starts_with_path):
-            logger.error(f"Incorrect Endpoint Received {endpoint}")
-            raise ValueError(f"Incorrect Endpoint Received: {endpoint}")
-
-        if starts_with_base:
-            endpoint = endpoint.split(self.base_url)[1]
-            logger.warning(
-                "Full URL Specification not needed, prefer to use the endpoint string.\n"
-                f"(Ex: Prefer {endpoint} over {self.base_url}{endpoint})."
-            )
+        
 
         # Output/Request Initialization
+        endpoint = self._clean_endpoint(endpoint)
+        url = self.base_url + endpoint
+        filter_param = self._handle_filters(filters)
+        # Populate here instead of mutable default arguments
         if cols is None:
             cols = []
-        output = []
         select = ",".join(cols)
+        output = []
         skip = 0
-        url = self.base_url + endpoint
 
         if masked:
             get_headers_fn = self.get_masked_headers
@@ -184,16 +218,17 @@ class AdpApiClient:
         call_session = ApiSession(
             self.session, self.cert, get_headers_fn, timeout=timeout
         )
+        
+        params = {'$top': page_size}
+        if select:
+            logging.debug(f'Restricting OData Selection to {select}')
+            params['$select'] = select
+        if filter_param:
+            logging.debug(f'Filtering Results according to OData query: {filter_param}')
+            params['$filter'] = filter_param
+        
         while True:
-            params = {
-                "$top": page_size,
-                "$skip": skip,
-            }
-
-            if select:
-                params["$select"] = select
-
-            logger.debug(f"Requesting with params: {params}")
+            params['$skip'] = skip
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
             response = call_session.get(url)

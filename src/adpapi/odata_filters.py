@@ -63,7 +63,10 @@ class Field(Expr):
         return expr
 
     def to_odata(self) -> str:
-        return self.path  # path like worker.person.legalName.givenName
+        # Convert dot notation to forward slash for OData v4 compliance
+        # Input: "workers.workAssignments.reportsTo.positionID"
+        # Output: "workers/workAssignments/reportsTo/positionID"
+        return self.path.replace(".", "/")
 
 
 @dataclass(frozen=True)
