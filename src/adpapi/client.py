@@ -141,7 +141,6 @@ class AdpApiClient:
                 raise
         
         # Remove outer parentheses added by BinaryOp if present
-        # ! COULD BE MOVED TO THE FILTEREXPRESSION OBJECT
         odata_str = filters.to_odata()
         if odata_str.startswith("(") and odata_str.endswith(")"):
             odata_str = odata_str[1:-1]
