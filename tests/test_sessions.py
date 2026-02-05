@@ -27,6 +27,7 @@ def api_session(mock_session, cert):
 @pytest.fixture
 def api_session_with_headers(mock_session, cert):
     """Provide an ApiSession with custom get_headers callable."""
+
     def get_headers_fn():
         return {"Authorization": "Bearer token"}
 
@@ -46,13 +47,16 @@ class TestApiSessionInitialization:
         """Test ApiSession initializes with default values."""
         assert api_session.session == mock_session
         assert api_session.cert == cert
-        assert api_session.get_headers() == {}  # get_headers callable returns empty dict
+        assert (
+            api_session.get_headers() == {}
+        )  # get_headers callable returns empty dict
         assert api_session.params == {}
         assert api_session.timeout == 30
         assert api_session.data is None
 
     def test_initialization_with_custom_values(self, mock_session, cert):
         """Test ApiSession initializes with custom values."""
+
         def get_headers_fn():
             return {"Authorization": "Bearer token"}
 
@@ -241,6 +245,7 @@ class TestRequestParameters:
 
     def test_request_includes_all_parameters(self, mock_session, cert):
         """Test that all parameters are passed to request function."""
+
         def get_headers_fn():
             return {"Authorization": "Bearer token", "Custom": "Header"}
 
@@ -262,7 +267,10 @@ class TestRequestParameters:
 
         # Verify all parameters were passed
         call_kwargs = mock_session.get.call_args[1]
-        assert call_kwargs["headers"] == {"Authorization": "Bearer token", "Custom": "Header"}
+        assert call_kwargs["headers"] == {
+            "Authorization": "Bearer token",
+            "Custom": "Header",
+        }
         assert call_kwargs["params"] == params
         assert call_kwargs["cert"] == cert
         assert call_kwargs["timeout"] == timeout
