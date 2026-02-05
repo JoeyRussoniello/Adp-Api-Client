@@ -1,21 +1,21 @@
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Union
 
 
 # AST NODE TYPES
 class Expr:
     def to_odata(self) -> str:
         raise NotImplementedError
-    
-    def __and__(self, other: 'Expr') -> 'BinaryOp':
-        return BinaryOp(self, 'and', other)
-    
-    def __or__(self, other: 'Expr') -> 'BinaryOp':
-        return BinaryOp(self, 'or', other)
 
-    def __invert__(self) -> 'UnaryOp':
-        return UnaryOp('not', self)
+    def __and__(self, other: "Expr") -> "BinaryOp":
+        return BinaryOp(self, "and", other)
+
+    def __or__(self, other: "Expr") -> "BinaryOp":
+        return BinaryOp(self, "or", other)
+
+    def __invert__(self) -> "UnaryOp":
+        return UnaryOp("not", self)
 
 
 @dataclass(frozen=True)
@@ -82,25 +82,27 @@ class Literal(Expr):
         s = str(v).replace("'", "''")
         return f"'{s}'"
 
+
 def literal(v: Any) -> Literal:
     return Literal(v)
 
-@dataclass(frozen = True)
+
+@dataclass(frozen=True)
 class Func(Expr):
     name: str
     args: List[Expr]
-    
-    def to_odata(self) -> str:
-        args_s = ', '.join(a.to_odata() for a in self.args)
-        return f'{self.name}({args_s})'
 
-@dataclass(frozen = True)
+    def to_odata(self) -> str:
+        args_s = ", ".join(a.to_odata() for a in self.args)
+        return f"{self.name}({args_s})"
+
+
+@dataclass(frozen=True)
 class BinaryOp(Expr):
     left: Expr
     # * Could be replaced with enum
     op: str  #'eq','ne','gt','ge','lt','le','and','or'
     right: Expr
-
 
     def to_odata(self) -> str:
         # Parentheses ensure correct precedence in mixed expressions
@@ -109,8 +111,9 @@ class BinaryOp(Expr):
 
 @dataclass(frozen=True)
 class UnaryOp(Expr):
-    op: str # 'not'
+    op: str  # 'not'
     expr: Expr
+
     def to_odata(self) -> str:
         return f"({self.op} {self.expr.to_odata()})"
 
@@ -346,22 +349,26 @@ if __name__ == "__main__":
     print(f"hireDate >= '2020-01-01':\n  {filter2.to_odata()}\n")
 
     # String functions
-    filter3 = FilterExpression.field("worker.person.legalName.familyName").contains("Smith")
+    filter3 = FilterExpression.field("worker.person.legalName.familyName").contains(
+        "Smith"
+    )
     print(f"familyName contains 'Smith':\n  {filter3.to_odata()}\n")
 
     # Complex expressions with and/or operators (wrap in FilterExpression)
-    filter4 = (
-        FilterExpression(FilterExpression.field("worker.person.legalName.givenName").eq("John"))
-        & FilterExpression(FilterExpression.field("worker.person.legalName.familyName").eq("Doe"))
+    filter4 = FilterExpression(
+        FilterExpression.field("worker.person.legalName.givenName").eq("John")
+    ) & FilterExpression(
+        FilterExpression.field("worker.person.legalName.familyName").eq("Doe")
     )
     print(f"givenName = 'John' AND familyName = 'Doe':\n  {filter4.to_odata()}\n")
 
     # Complex expression with or
-    filter5 = (
-        FilterExpression(FilterExpression.field("department").eq("Engineering"))
-        | FilterExpression(FilterExpression.field("department").eq("Sales"))
+    filter5 = FilterExpression(
+        FilterExpression.field("department").eq("Engineering")
+    ) | FilterExpression(FilterExpression.field("department").eq("Sales"))
+    print(
+        f"department = 'Engineering' OR department = 'Sales':\n  {filter5.to_odata()}\n"
     )
-    print(f"department = 'Engineering' OR department = 'Sales':\n  {filter5.to_odata()}\n")
 
     # Using isin for multiple values
     filter6 = FilterExpression.field("status").isin(["Active", "OnLeave", "Pending"])
@@ -374,12 +381,12 @@ if __name__ == "__main__":
     print("=== Parsing OData Filter Strings ===\n")
 
     # Parse existing OData filter strings
-    odata_str = "(worker.person.legalName.givenName eq 'John') and (hireDate ge '2020-01-01')"
+    odata_str = (
+        "(worker.person.legalName.givenName eq 'John') and (hireDate ge '2020-01-01')"
+    )
     try:
         filter8 = FilterExpression.from_string(odata_str)
         print(f"Parsed filter:\n  Input:  {odata_str}")
         print(f"  Output: {filter8.to_odata()}\n")
     except Exception as e:
         print(f"Parse error: {e}\n")
-
-

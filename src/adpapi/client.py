@@ -189,11 +189,11 @@ class AdpApiClient:
                 "$top": page_size,
                 "$skip": skip,
             }
-            
+
             if select:
-                params['$select'] = select
-                
-            logger.debug(f'Requesting with params: {params}')
+                params["$select"] = select
+
+            logger.debug(f"Requesting with params: {params}")
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
             response = call_session.get(url)

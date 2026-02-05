@@ -13,9 +13,7 @@ from adpapi.odata_filters import (
     BinaryOp,
     Field,
     FilterExpression,
-    Func,
     Literal,
-    UnaryOp,
     literal,
 )
 
@@ -130,7 +128,9 @@ class TestComparisonOperators:
         """All comparison operators should generate valid OData syntax."""
         field = Field("Age")
         expr = getattr(field, method)(value)
-        expected = f"(Age {op} '{value}')" if isinstance(value, str) else f"(Age {op} {value})"
+        expected = (
+            f"(Age {op} '{value}')" if isinstance(value, str) else f"(Age {op} {value})"
+        )
         assert expr.to_odata() == expected
 
     def test_equality_comparison(self):
@@ -253,11 +253,7 @@ class TestLogicalOperators:
 
     def test_chained_or_operators(self):
         """Multiple OR operators should chain correctly."""
-        expr = (
-            Field("Type").eq("A")
-            | Field("Type").eq("B")
-            | Field("Type").eq("C")
-        )
+        expr = Field("Type").eq("A") | Field("Type").eq("B") | Field("Type").eq("C")
         result = expr.to_odata()
         assert "Type eq 'A'" in result
         assert "Type eq 'B'" in result
@@ -266,10 +262,9 @@ class TestLogicalOperators:
 
     def test_mixed_and_or_operators(self):
         """AND and OR should work together, with precedence handled by parentheses."""
-        expr = (
-            (Field("Status").eq("Active") & Field("Age").ge(18))
-            | Field("Status").eq("Verified")
-        )
+        expr = (Field("Status").eq("Active") & Field("Age").ge(18)) | Field(
+            "Status"
+        ).eq("Verified")
         result = expr.to_odata()
         assert "Status eq 'Active'" in result
         assert "Age ge 18" in result
@@ -365,9 +360,8 @@ class TestComplexExpressions:
 
     def test_expression_with_string_and_comparison_functions(self):
         """Mix string functions with comparisons."""
-        expr = (
-            Field("Name").contains("John")
-            & (Field("Age").ge(18) & Field("Age").le(65))
+        expr = Field("Name").contains("John") & (
+            Field("Age").ge(18) & Field("Age").le(65)
         )
         result = expr.to_odata()
         assert "contains(Name, 'John')" in result
@@ -376,9 +370,8 @@ class TestComplexExpressions:
 
     def test_expression_with_all_operators(self):
         """Test expression using comparisons, strings, and logic."""
-        expr = (
-            (Field("Status").isin(["Active", "Pending"]) & Field("Score").gt(50))
-            | (Field("Name").startswith("Admin") & Field("Role").eq("Admin"))
+        expr = (Field("Status").isin(["Active", "Pending"]) & Field("Score").gt(50)) | (
+            Field("Name").startswith("Admin") & Field("Role").eq("Admin")
         )
         result = expr.to_odata()
         assert "Status eq 'Active'" in result
