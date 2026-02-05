@@ -112,10 +112,14 @@ class AdpApiClient:
         accept = "application/json"
         if not masked:
             accept += ";masked=false"
-        return {
+            logging.debug(f'Calling _get_headers with accept = {accept}')
+            
+        headers = {
             "Authorization": f"Bearer {self.token}",
             "Accept": accept,
         }
+        
+        return headers 
 
     def call_endpoint(
         self,
