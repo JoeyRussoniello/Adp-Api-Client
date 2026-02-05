@@ -1,16 +1,11 @@
 [project]
 name = "adpapi"
-version = "1.0.0"
+version = "1.0.1"
 description = "Add your description here"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 authors = [
     {name = "Joey Russoniello", email = "jmrusso@bu.edu"}
-]
-
-dependencies = [
-    "python-dotenv>=1.2.1",
-    "requests>=2.32.5",
 ]
 classifiers = [
     'Programming Language :: Python :: 3.10', 
@@ -19,11 +14,9 @@ classifiers = [
     'Intended Audience :: Developers', 
     'Topic :: Software Development :: Libraries :: Python Modules'
 ]
-
-[project.optional-dependencies]
-
-dev = [
-'pytest>=7.0.0', 'pytest-cov>=4.0.0', 'black>=22.0.0', 'flake8>=4.0.0'
+dependencies = [
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
 ]
 
 [project.urls]
@@ -39,5 +32,21 @@ where = ["src"]
 
 [dependency-groups]
 dev = [
-    "pyyaml>=6.0.3",
+    "pyyaml>=6.0.3", 'pytest>=7.0.0', 'pytest-cov>=4.0.0',
 ]
+optional = [
+    'black>=22.0.0', 'flake8>=4.0.0'
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "golden: Integration tests requiring real API credentials (skipped by default)"
+]
+
+# [tool.pytest.ini_options]
+# addopts = [
+#     "--import-mode=importlib",
+# ]
+# pythonpath = [
+#     "src/adpapi",
+# ]
