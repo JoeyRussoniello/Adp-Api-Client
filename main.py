@@ -41,6 +41,7 @@ from dotenv import load_dotenv
 
 from adpapi.client import AdpApiClient
 from adpapi.logger import configure_logging
+from adpapi.odata_filters import FilterExpression
 
 logger = logging.getLogger(__name__)
 
@@ -74,14 +75,19 @@ def main() -> None:
     # Define which fields to request from ADP and which endpoint to call.
     # These are ADP field paths; adjust them depending on your use case and permissions.
     desired_cols = [
-        "workers/person/legalName",
-        "workers/person/birthDate",
-        "workers/workAssignments/reportsTo",
         "workers/associateOID",
+        "workers/person/legalName",
         "workers/businessCommunication/emails",
+        "workers/person/birthDate",
+        "workers/workerDates/originalHireDate",
+        "workers/workAssignments/reportsTo",
     ]
     endpoint = "/hr/v2/workers"
-
+    
+    # Filter for just active employees
+    filters = FilterExpression.field(
+            "workers.workAssignments.assignmentStatus.statusCode.codeValue"
+    ).eq("A")
     # Use the client as a context manager so any underlying session/resources are cleaned up.
     with AdpApiClient(client_id, client_secret, cert_path, key_path) as api:
         start_time = time.perf_counter()
@@ -90,14 +96,15 @@ def main() -> None:
         # `masked=False` requests unmasked fields when your ADP permissions allow it.
         # `max_requests=1` is a safety guard for examples; remove/adjust for full exports.
         workers = api.call_endpoint(
-            endpoint, desired_cols, masked=False, max_requests=1
+            endpoint, select = desired_cols, masked=True, page_size = 100, max_requests=1,
+            filters=filters
         )
 
         elapsed = time.perf_counter() - start_time
         logger.debug("Processed worker export in %.2f seconds.", elapsed)
 
     # Persist the returned JSON response locally for inspection / downstream processing.
-    file_path = "worker_data.json"
+    file_path = "worker_meta_data.json"
     with open(file_path, mode="w", encoding="utf-8") as file:
         json.dump(workers, file, indent=2)
     logger.info("Wrote worker data to %s", file_path)

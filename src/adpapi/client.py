@@ -136,7 +136,7 @@ class AdpApiClient:
         elif isinstance(filters, str):
             try:
                 filters = FilterExpression.from_string(filters)
-            except ValueError as e:
+            except ValueError:
                 logger.error(f'Error parsing filter expression: {filters}')
                 raise
         
@@ -165,7 +165,7 @@ class AdpApiClient:
     def call_endpoint(
         self,
         endpoint: str,
-        cols: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         filters: Optional[Union[str, FilterExpression]] = None,
         masked: Optional[bool] = True,
         timeout: Optional[int] = DEFAULT_TIMEOUT,
@@ -176,7 +176,7 @@ class AdpApiClient:
 
         Args:
             endpoint (str): API Endpoint or qualified URL to call
-            cols (List[str]): Table Columns to pull
+            select (List[str]): Table Columns to pull
             masked (bool, optional): Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.
             timeout (int, optional): Time to wait on. Defaults to 30.
             page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.
@@ -203,9 +203,9 @@ class AdpApiClient:
         url = self.base_url + endpoint
         filter_param = self._handle_filters(filters)
         # Populate here instead of mutable default arguments
-        if cols is None:
-            cols = []
-        select = ",".join(cols)
+        if select is None:
+            select = []
+        select = ",".join(select)
         output = []
         skip = 0
 

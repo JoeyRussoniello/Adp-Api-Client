@@ -60,6 +60,48 @@ with AdpApiClient(
 print(len(workers))
 ```
 
+## Filtering with OData
+
+Use `FilterExpression` to build OData `$filter` parameters. Pass filters to `call_endpoint()` using the `filters` parameter:
+
+```python
+from adpapi.odata_filters import FilterExpression
+
+# Simple equality
+filter1 = FilterExpression.field("workers.status").eq("Active")
+
+# Combine conditions with logical operators
+filter2 = (
+    FilterExpression.field("workers.status").eq("Active")
+    & FilterExpression.field("workers.hireDate").ge("2020-01-01")
+)
+
+# Multiple values (IN operator)
+filter3 = FilterExpression.field("workers.status").isin(["Active", "OnLeave", "Pending"])
+
+# String search
+filter4 = FilterExpression.field("workers.person.legalName.familyName").contains("Smith")
+
+# Pass to API call
+workers = api.call_endpoint(
+    endpoint="/hr/v2/workers",
+    filters=filter2,
+    cols=cols,
+    masked=True,
+)
+```
+
+**Supported Operators:**
+- Comparison: `eq`, `ne`, `gt`, `ge`, `lt`, `le`
+- String functions: `contains()`, `startswith()`, `endswith()`
+- Logical: `&` (and), `|` (or), `~` (not)
+- IN operator: `isin([...])`
+
+**Notes:**
+- Field paths use dots in Python code (e.g., `workers.status`) but convert to forward slashes in OData syntax (`workers/status`)
+- Not all operators are supported by all endpoints; check ADP API documentation
+- You can also pass OData filter strings directly: `filters="workers/status eq 'Active'"`
+
 ## Notes
 - Uses OData-style pagination (`$top`, `$skip`, `$select`) and stops on HTTP 204 (No Content).
 - `masked=False` requests `Accept: application/json;masked=false` (subject to tenant permissions).
