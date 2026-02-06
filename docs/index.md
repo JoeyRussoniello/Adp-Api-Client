@@ -24,7 +24,6 @@ Welcome to the ADP API Client documentation. This project provides a Python clie
 Take, for example, the following code that handles exactly one request to the `/hr/v2/workers` endpoint, without pagination, token refreshing, or OData filtering
 
 ```python
-import datetime
 import json
 import logging
 import os
@@ -43,7 +42,10 @@ ENDPOINT = "/hr/v2/workers"
 url = BASE_URL + ENDPOINT
 
 # Read required ADP OAuth client credentials from environment.
-
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
+cert_path = 'certificate.pem'
+key_path = 'adp.key'
 cert = (cert_path, key_path)
 
 def get_token(timeout: int = DEFAULT_TIMEOUT) -> str:
@@ -89,28 +91,25 @@ headers = {
     'Authorization': f'Bearer {token}' 
 }
 
-now = datetime.datetime.now()
-timestamp = now.strftime('%m/%d/%Y - %H:%M:%S')
 response = requests.get(
     url, params = params, headers = headers, cert = cert, timeout = DEFAULT_TIMEOUT
 )
 
 results = response.json()
+print(results)
 ```
 
 The `adpapi` turns this whole chunk of code into a simple, readable OOP approach that automatically handles token acquisition and parameter generation:
 
 ```python
 from dotenv import load_dotenv
-from adpapi.client import AdpApiClient
+from adpapi.client import AdpApiClient, AdpCredentials
 
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
-cert_path = os.getenv("CERT_PATH", "certificate.pem")
-key_path = os.getenv("KEY_PATH", "adp.key")
+load_dotenv()
+credentials = AdpCredentials.from_env()
 endpoint = 'hr/v2/workers
 
-with AdpApiClient(client_id, client_secret, cert_path, key_path) as api:
+with AdpApiClient(credentials) as api:
     results = api.call_endpoint(endpoint, select = ['workers/person/birthDate'], page_size = 1, max_requests = 1)
 
 print(results)

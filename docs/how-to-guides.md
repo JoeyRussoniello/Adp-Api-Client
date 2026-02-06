@@ -5,14 +5,15 @@
 The ADP API Client uses OAuth 2.0 with certificate-based authentication:
 
 ```python
-from adpapi.client import AdpApiClient
+from adpapi.client import AdpApiClient, AdpCredentials
 
-client = AdpApiClient(
-    client_id="your_client_id",
-    client_secret="your_client_secret",
-    cert_path="path/to/cert.pem",
-    key_path="path/to/key.pem"
+credentials = AdpCredentials(
+    client_id = 'your_client_id',
+    client_secret = 'your_client_secret',
+    cert_path = 'path/to/cert.pem', # Optional
+    key_path = 'path/to/adp.key' # Optional
 )
+client = AdpApiClient(credentials)
 ```
 
 ## Filter Results with OData

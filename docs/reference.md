@@ -1,20 +1,28 @@
 # API Reference
 
+## Credential Management
+
+To use the `AdpApiClient` you first must configure your API credentials. These credentials are managed through an `AdpCredentials` object, which can be configured manually or from environment variables.
+
+::: adpapi.client.AdpCredentials
+
 ## Client
 
 The main entry point for interacting with the ADP API. Can be createdly manually, or **using context management**
 
 ```python
-from adpapi.client import AdpApiClient
+from adpapi.client import AdpApiClient, AdpCredentials
 
-with AdpApiClient(client_id, client_secret, key_path, cert_path) as api:
+credentials = AdpCredentials(
+    client_id, client_secret, key_path, cert_path
+)
+with AdpApiClient(credentials) as api:
     api.call_endpoint(...)
 ```
 
 The `AdpApiClient` surfaces one main entry point for all OData queries, `.call_endpoint()`
 
 ::: adpapi.client.AdpApiClient.call_endpoint
-
 
 ## Filters
 

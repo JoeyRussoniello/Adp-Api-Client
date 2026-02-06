@@ -12,16 +12,20 @@ The ADP API Client uses the OAuth 2.0 Client Credentials flow with certificate-b
 4. The client uses this token to make API requests
 5. When the token approaches expiration, it's automatically refreshed
 
-## Session Management
+## Credential Loading
 
-The `ApiSession` dataclass manages HTTP sessions, retry logic, and authentication headers. It encapsulates:
+The `AdpCredentials` object holds all API credentials, and supports loading from environment variables
 
-- A `requests.Session` object for connection pooling
-- Client certificate information for SSL/TLS authentication
-- A callback function for dynamic header generation (useful for token refresh)
-- Request timeout handling
+```python
+from dotenv import load_dotenv
+from adpapi.client import AdpCredentials
 
-::: adpapi.sessions.ApiSession
+creds = AdpCredentials.from_env()
+```
+
+> *NOTE*: `.from_env` expects the following environment variables
+> - `CLIENT_ID` and `CLIENT_SECRET`, mandatory, links to the API proejct
+> - `CERT_PATH` and `KEY_PATH`, optional, default to `certificate.pem` and `adp.key`, respectively if not provided
 
 ## OData Filtering
 
@@ -42,3 +46,14 @@ The client includes built-in retry logic for transient failures using exponentia
 Comprehensive logging is available at multiple levels (DEBUG, INFO, WARNING, ERROR) to help with troubleshooting:
 
 ::: adpapi.logger.configure_logging
+
+## Session Management
+
+The `ApiSession` dataclass manages HTTP sessions, retry logic, and authentication headers. It encapsulates:
+
+- A `requests.Session` object for connection pooling
+- Client certificate information for SSL/TLS authentication
+- A callback function for dynamic header generation (useful for token refresh)
+- Request timeout handling
+
+::: adpapi.sessions.ApiSession
