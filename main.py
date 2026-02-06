@@ -92,7 +92,7 @@ def main() -> None:
             masked=True,
             page_size=10,
             max_requests=1,
-            # select=desired_cols,
+            select=desired_cols,
             filters=filters,
         )
 
