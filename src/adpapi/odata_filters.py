@@ -18,6 +18,7 @@ Example:
     >>> f.to_odata()
     "(worker/firstName eq 'John')"
 """
+
 import re
 from dataclasses import dataclass
 from typing import Any, List, Optional, Union
@@ -26,21 +27,22 @@ from typing import Any, List, Optional, Union
 # AST NODE TYPES
 class Expr:
     """Abstract base class for OData filter expression AST nodes.
-    
+
     All filter expressions inherit from this class and implement the to_odata()
     method to convert the expression tree to an OData filter string.
-    
+
     Supports logical operator overloading:
     - & (and): Combines two expressions with AND
     - | (or): Combines two expressions with OR
     - ~ (not): Inverts an expression with NOT
     """
+
     def to_odata(self) -> str:
         """Convert this expression to an OData filter string.
-        
+
         Returns:
             str: The OData v4 filter string representation of this expression.
-            
+
         Raises:
             NotImplementedError: This method must be implemented by subclasses.
         """
@@ -48,13 +50,13 @@ class Expr:
 
     def __and__(self, other: "Expr") -> "BinaryOp":
         """Combine two expressions with logical AND.
-        
+
         Args:
             other: Another Expr to combine with AND.
-            
+
         Returns:
             BinaryOp: A new binary operation node representing the AND operation.
-            
+
         Example:
             >>> expr1 = FilterExpression.field('age').gt(18)
             >>> expr2 = FilterExpression.field('status').eq('Active')
@@ -64,13 +66,13 @@ class Expr:
 
     def __or__(self, other: "Expr") -> "BinaryOp":
         """Combine two expressions with logical OR.
-        
+
         Args:
             other: Another Expr to combine with OR.
-            
+
         Returns:
             BinaryOp: A new binary operation node representing the OR operation.
-            
+
         Example:
             >>> expr1 = FilterExpression.field('status').eq('Active')
             >>> expr2 = FilterExpression.field('status').eq('Pending')
@@ -80,10 +82,10 @@ class Expr:
 
     def __invert__(self) -> "UnaryOp":
         """Invert an expression with logical NOT.
-        
+
         Returns:
             UnaryOp: A new unary operation node applying NOT to this expression.
-            
+
         Example:
             >>> expr = FilterExpression.field('isTerminated').eq(True)
             >>> inverted = ~expr  # NOT isTerminated = true
@@ -94,30 +96,31 @@ class Expr:
 @dataclass(frozen=True)
 class Field(Expr):
     """Represents a field reference in an OData filter expression.
-    
+
     Fields are identified by their path (e.g., 'worker.person.firstName').
     This class provides a fluent API for building filter conditions on fields.
-    
+
     Attributes:
         path (str): The dot-separated path to the field, supporting nested properties.
-        
+
     Example:
         >>> field = Field('worker.hireDate')
         >>> field.eq('2020-01-01').to_odata()
         "(worker/hireDate eq '2020-01-01')"
     """
+
     path: str
 
     # comparisons
     def eq(self, val: Any) -> "BinaryOp":
         """Create an equality comparison filter (field = value).
-        
+
         Args:
             val: The value to compare against. Can be string, number, boolean, or None.
-            
+
         Returns:
             BinaryOp: A binary operation representing the equality condition.
-            
+
         Example:
             >>> FilterExpression.field('status').eq('Active').to_odata()
             "(status eq 'Active')"
@@ -126,13 +129,13 @@ class Field(Expr):
 
     def ne(self, val: Any) -> "BinaryOp":
         """Create a not-equal comparison filter (field != value).
-        
+
         Args:
             val: The value to compare against. Can be string, number, boolean, or None.
-            
+
         Returns:
             BinaryOp: A binary operation representing the not-equal condition.
-            
+
         Example:
             >>> FilterExpression.field('status').ne('Inactive').to_odata()
             "(status ne 'Inactive')"
@@ -141,13 +144,13 @@ class Field(Expr):
 
     def gt(self, val: Any) -> "BinaryOp":
         """Create a greater-than comparison filter (field > value).
-        
+
         Args:
             val: The value to compare against. Typically a number or date string.
-            
+
         Returns:
             BinaryOp: A binary operation representing the greater-than condition.
-            
+
         Example:
             >>> FilterExpression.field('salary').gt(50000).to_odata()
             "(salary gt 50000)"
@@ -156,13 +159,13 @@ class Field(Expr):
 
     def ge(self, val: Any) -> "BinaryOp":
         """Create a greater-than-or-equal comparison filter (field >= value).
-        
+
         Args:
             val: The value to compare against. Typically a number or date string.
-            
+
         Returns:
             BinaryOp: A binary operation representing the greater-than-or-equal condition.
-            
+
         Example:
             >>> FilterExpression.field('hireDate').ge('2020-01-01').to_odata()
             "(hireDate ge '2020-01-01')"
@@ -171,13 +174,13 @@ class Field(Expr):
 
     def lt(self, val: Any) -> "BinaryOp":
         """Create a less-than comparison filter (field < value).
-        
+
         Args:
             val: The value to compare against. Typically a number or date string.
-            
+
         Returns:
             BinaryOp: A binary operation representing the less-than condition.
-            
+
         Example:
             >>> FilterExpression.field('salary').lt(100000).to_odata()
             "(salary lt 100000)"
@@ -186,13 +189,13 @@ class Field(Expr):
 
     def le(self, val: Any) -> "BinaryOp":
         """Create a less-than-or-equal comparison filter (field <= value).
-        
+
         Args:
             val: The value to compare against. Typically a number or date string.
-            
+
         Returns:
             BinaryOp: A binary operation representing the less-than-or-equal condition.
-            
+
         Example:
             >>> FilterExpression.field('retirementDate').le('2025-12-31').to_odata()
             "(retirementDate le '2025-12-31')"
@@ -202,13 +205,13 @@ class Field(Expr):
     # string functions
     def contains(self, val: Any) -> "Func":
         """Create a substring contains filter for string fields.
-        
+
         Args:
             val: The substring to search for within the field value.
-            
+
         Returns:
             Func: A function call representing the contains operation.
-            
+
         Example:
             >>> FilterExpression.field('lastName').contains('Smith').to_odata()
             "contains(lastName, 'Smith')"
@@ -217,13 +220,13 @@ class Field(Expr):
 
     def startswith(self, val: Any) -> "Func":
         """Create a string starts-with filter.
-        
+
         Args:
             val: The prefix to search for at the start of the field value.
-            
+
         Returns:
             Func: A function call representing the startswith operation.
-            
+
         Example:
             >>> FilterExpression.field('firstName').startswith('John').to_odata()
             "startswith(firstName, 'John')"
@@ -232,13 +235,13 @@ class Field(Expr):
 
     def endswith(self, val: Any) -> "Func":
         """Create a string ends-with filter.
-        
+
         Args:
             val: The suffix to search for at the end of the field value.
-            
+
         Returns:
             Func: A function call representing the endswith operation.
-            
+
         Example:
             >>> FilterExpression.field('email').endswith('@company.com').to_odata()
             "endswith(email, '@company.com')"
@@ -248,17 +251,17 @@ class Field(Expr):
     # emulate IN as disjunction
     def isin(self, values: List[Any]) -> "Expr":
         """Create an IN filter for multiple values (field IN (val1, val2, ...)).
-        
+
         Since OData v4 doesn't have a native IN operator, this is implemented as
         a series of OR conditions joined together.
-        
+
         Args:
             values: A list of values to check against. If empty, returns false.
-            
+
         Returns:
             Expr: An expression representing the IN operation. For empty lists,
                   returns an always-false condition (1 eq 0).
-                  
+
         Example:
             >>> statuses = ['Active', 'OnLeave', 'Pending']
             >>> FilterExpression.field('status').isin(statuses).to_odata()
@@ -275,12 +278,12 @@ class Field(Expr):
 
     def to_odata(self) -> str:
         """Convert this field reference to an OData path string.
-        
+
         Converts dot notation to forward slash notation for OData v4 compliance.
-        
+
         Returns:
             str: The OData-compliant field path.
-            
+
         Example:
             >>> Field('worker.person.firstName').to_odata()
             'worker/person/firstName'
@@ -294,13 +297,13 @@ class Field(Expr):
 @dataclass(frozen=True)
 class Literal(Expr):
     """Represents a literal value in an OData filter expression.
-    
+
     Handles conversion of Python values (strings, numbers, booleans, None) to
     their OData string representation.
-    
+
     Attributes:
         value: The Python value to represent as a literal.
-        
+
     Example:
         >>> lit = Literal(42)
         >>> lit.to_odata()
@@ -309,21 +312,22 @@ class Literal(Expr):
         >>> lit.to_odata()
         \"'hello'\"
     """
+
     value: Any
 
     def to_odata(self) -> str:
         """Convert this literal value to an OData string representation.
-        
+
         Handles proper escaping of quotes and conversion of Python types to
         OData literal syntax.
-        
+
         Returns:
             str: The OData-compliant literal representation.
             - null for None values
             - true/false for booleans
             - numeric representation for numbers
             - quoted and escaped string for text values
-            
+
         Example:
             >>> Literal(None).to_odata()
             'null'
@@ -346,15 +350,15 @@ class Literal(Expr):
 
 def literal(v: Any) -> Literal:
     """Create a Literal value from a Python value.
-    
+
     Convenience function for creating Literal nodes.
-    
+
     Args:
         v: Any Python value (string, number, boolean, None).
-        
+
     Returns:
         Literal: A new Literal node representing the value.
-        
+
     Example:
         >>> literal(42).to_odata()
         '42'
@@ -367,28 +371,29 @@ def literal(v: Any) -> Literal:
 @dataclass(frozen=True)
 class Func(Expr):
     """Represents a function call in an OData filter expression.
-    
+
     Functions can include built-in OData string functions like contains,
     startswith, and endswith, or potentially custom functions.
-    
+
     Attributes:
         name (str): The function name (e.g., 'contains', 'startswith', 'endswith').
         args (List[Expr]): List of argument expressions to pass to the function.
-        
+
     Example:
         >>> func = Func('contains', [Field('lastName'), Literal('Smith')])
         >>> func.to_odata()
         \"contains(lastName, 'Smith')\"
     """
+
     name: str
     args: List[Expr]
 
     def to_odata(self) -> str:
         """Convert this function call to an OData string representation.
-        
+
         Returns:
             str: The OData-compliant function call syntax.
-            
+
         Example:
             >>> Func('startswith', [Field('email'), Literal('admin')]).to_odata()
             \"startswith(email, 'admin')\"
@@ -400,20 +405,21 @@ class Func(Expr):
 @dataclass(frozen=True)
 class BinaryOp(Expr):
     """Represents a binary operation in an OData filter expression.
-    
+
     Binary operations include comparisons (eq, ne, gt, ge, lt, le) and logical
     operators (and, or).
-    
+
     Attributes:
         left (Expr): The left operand expression.
         op (str): The operator ('eq', 'ne', 'gt', 'ge', 'lt', 'le', 'and', 'or').
         right (Expr): The right operand expression.
-        
+
     Example:
         >>> op = BinaryOp(Field('age'), 'gt', Literal(18))
         >>> op.to_odata()
         '(age gt 18)'
     """
+
     left: Expr
     # * Could be replaced with enum
     op: str  #'eq','ne','gt','ge','lt','le','and','or'
@@ -421,13 +427,13 @@ class BinaryOp(Expr):
 
     def to_odata(self) -> str:
         """Convert this binary operation to an OData string representation.
-        
+
         Wraps the entire operation in parentheses to ensure correct precedence
         in complex expressions.
-        
+
         Returns:
             str: The OData-compliant operation syntax with parentheses.
-            
+
         Example:
             >>> BinaryOp(Field('a'), 'eq', Literal(1)).to_odata()
             '(a eq 1)'
@@ -439,27 +445,28 @@ class BinaryOp(Expr):
 @dataclass(frozen=True)
 class UnaryOp(Expr):
     """Represents a unary operation in an OData filter expression.
-    
+
     Currently supports the NOT operator for inverting boolean expressions.
-    
+
     Attributes:
         op (str): The operator (typically 'not').
         expr (Expr): The operand expression to apply the operator to.
-        
+
     Example:
         >>> op = UnaryOp('not', BinaryOp(Field('isActive'), 'eq', Literal(True)))
         >>> op.to_odata()
         '(not (isActive eq true))'
     """
+
     op: str  # 'not'
     expr: Expr
 
     def to_odata(self) -> str:
         """Convert this unary operation to an OData string representation.
-        
+
         Returns:
             str: The OData-compliant operation syntax with parentheses.
-            
+
         Example:
             >>> UnaryOp('not', Field('isActive')).to_odata()
             '(not isActive)'
@@ -474,23 +481,23 @@ class UnaryOp(Expr):
 
 class FilterExpression(Expr):
     """Public API for creating and managing OData filter expressions.
-    
+
     Attributes:
         _node (Expr): The internal AST node representing the expression.
-        
+
     Examples:
         Build filters programmatically:
         >>> f = FilterExpression.field('firstName').eq('John')
         >>> f.to_odata()
         "(firstName eq 'John')"
-        
+
         Combine with logical operators:
         >>> f1 = FilterExpression.field('age').gt(18)
         >>> f2 = FilterExpression.field('status').eq('Active')
         >>> combined = f1 & f2
         >>> combined.to_odata()
         "((age gt 18) and (status eq 'Active'))"
-        
+
         Parse existing OData filter strings:
         >>> f = FilterExpression.from_string("firstName eq 'John'")
         >>> f.to_odata()
@@ -499,7 +506,7 @@ class FilterExpression(Expr):
 
     def __init__(self, node: Expr):
         """Initialize a FilterExpression with an AST node.
-        
+
         Args:
             node: An Expr AST node representing the filter expression.
         """
@@ -508,10 +515,10 @@ class FilterExpression(Expr):
     # façade pass-through
     def to_odata(self) -> str:
         """Convert this filter expression to an OData v4 filter string.
-        
+
         Returns:
             str: The complete OData filter string ready for use in API requests.
-            
+
         Example:
             >>> FilterExpression.field('status').eq('Active').to_odata()
             "(status eq 'Active')"
@@ -522,23 +529,23 @@ class FilterExpression(Expr):
     @staticmethod
     def field(path: str) -> Field:
         """Create a field reference for building filter conditions.
-        
+
         This is the primary entry point for building filters. The returned Field
         object provides a fluent API with comparison and string function methods.
-        
+
         Args:
             path (str): Dot-separated field path (e.g., 'worker.person.firstName').
                        Supports nested properties accessible through the API.
-            
+
         Returns:
             Field: A Field object with methods for building conditions.
-            
+
         Example:
             >>> f = FilterExpression.field('lastName')
             >>> f = f.eq('Smith')
             >>> f.to_odata()
             "(lastName eq 'Smith')"
-            
+
         Commonly used field paths:
             - 'worker.firstName' - Worker's first name
             - 'worker.lastName' - Worker's last name
@@ -552,7 +559,7 @@ class FilterExpression(Expr):
     @staticmethod
     def from_string(s: str) -> "FilterExpression":
         """Parse an OData filter string into a FilterExpression.
-        
+
         This parser supports a subset of OData v4 filter syntax, including:
         - Comparison operators: eq, ne, gt, ge, lt, le
         - Logical operators: and, or, not
@@ -560,24 +567,24 @@ class FilterExpression(Expr):
         - String functions: contains(), startswith(), endswith()
         - Literal values: strings, numbers, booleans, null
         - Field paths with dot notation
-        
+
         Args:
             s (str): An OData filter string to parse.
-            
+
         Returns:
             FilterExpression: A parsed and structured filter expression.
-            
+
         Raises:
             ValueError: If the filter string has syntax errors or uses unsupported
                        OData features.
-            
+
         Example:
             >>> f = FilterExpression.from_string(
             ...     "(firstName eq 'John') and (lastName eq 'Doe')"
             ... )
             >>> f.to_odata()
             "((firstName eq 'John') and (lastName eq 'Doe'))"
-            
+
             Parse a string function:
             >>> f = FilterExpression.from_string(
             ...     "contains(email, '@company.com')"
@@ -591,13 +598,13 @@ class FilterExpression(Expr):
     # combinators keep returning FilterExpression
     def __and__(self, other: Expr) -> "FilterExpression":
         """Combine this expression with another using logical AND.
-        
+
         Args:
             other: Another FilterExpression or Expr to combine with AND.
-            
+
         Returns:
             FilterExpression: A new combined filter expression.
-            
+
         Example:
             >>> expr1 = FilterExpression.field('age').gt(18)
             >>> expr2 = FilterExpression.field('status').eq('Active')
@@ -609,13 +616,13 @@ class FilterExpression(Expr):
 
     def __or__(self, other: Expr) -> "FilterExpression":
         """Combine this expression with another using logical OR.
-        
+
         Args:
             other: Another FilterExpression or Expr to combine with OR.
-            
+
         Returns:
             FilterExpression: A new combined filter expression.
-            
+
         Example:
             >>> expr1 = FilterExpression.field('status').eq('Active')
             >>> expr2 = FilterExpression.field('status').eq('Pending')
@@ -627,10 +634,10 @@ class FilterExpression(Expr):
 
     def __invert__(self) -> "FilterExpression":
         """Invert this expression using logical NOT.
-        
+
         Returns:
             FilterExpression: A new inverted filter expression.
-            
+
         Example:
             >>> expr = FilterExpression.field('isTerminated').eq(True)
             >>> inverted = ~expr
@@ -642,13 +649,13 @@ class FilterExpression(Expr):
 
 def _unwrap(e: Union[Expr, FilterExpression]) -> Expr:
     """Extract the internal AST node from a FilterExpression if needed.
-    
+
     Helper function to unwrap FilterExpression instances for combining with
     other expressions. Returns the input unchanged if it's already an Expr.
-    
+
     Args:
         e: An Expr or FilterExpression.
-        
+
     Returns:
         Expr: The underlying AST node.
     """
@@ -692,14 +699,15 @@ _TOKEN_RE = re.compile(
 
 class _Token:
     """Internal representation of a lexical token.
-    
+
     Attributes:
         type (str): The token type (e.g., 'IDENT', 'OP', 'STRING').
         value (str): The raw text value of the token.
     """
+
     def __init__(self, typ: str, val: str):
         """Initialize a token.
-        
+
         Args:
             typ: The token type identifier.
             val: The token's string value.
@@ -710,10 +718,10 @@ class _Token:
 
 class _FilterParser:
     """Internal parser for OData filter strings.
-    
+
     Implements a recursive descent parser for a subset of OData v4 filters.
     Produces an AST of Expr nodes that can be converted to OData syntax.
-    
+
     Supported grammar:
         expr       := or_expr
         or_expr    := and_expr ('or' and_expr)*
@@ -723,10 +731,10 @@ class _FilterParser:
         primary    := FUNC '(' arg_list ')' | '(' expr ')' | literal | field
         arg_list   := expr (',' expr)*
     """
-    
+
     def __init__(self, text: str):
         """Initialize the parser with a filter string.
-        
+
         Args:
             text: The OData filter string to parse.
         """
@@ -735,10 +743,10 @@ class _FilterParser:
 
     def _tokenize(self, text):
         """Tokenize an OData filter string.
-        
+
         Args:
             text: The filter string to tokenize.
-            
+
         Yields:
             _Token: Individual tokens from the input.
         """
@@ -752,7 +760,7 @@ class _FilterParser:
 
     def _peek(self) -> Optional[_Token]:
         """Look at the current token without consuming it.
-        
+
         Returns:
             _Token: The current token, or None if at EOF.
         """
@@ -760,13 +768,13 @@ class _FilterParser:
 
     def _eat(self, typ: str) -> _Token:
         """Consume and return the next token if it matches expected type.
-        
+
         Args:
             typ: The expected token type.
-            
+
         Returns:
             _Token: The consumed token.
-            
+
         Raises:
             ValueError: If the current token doesn't match the expected type.
         """
@@ -778,10 +786,10 @@ class _FilterParser:
 
     def _match(self, typ: str) -> Optional[_Token]:
         """Optionally consume the next token if it matches a type.
-        
+
         Args:
             typ: The expected token type.
-            
+
         Returns:
             _Token: The consumed token if matched, None otherwise.
         """
@@ -799,13 +807,13 @@ class _FilterParser:
     # cmp_expr := primary (OP primary)?
     # primary := FUNC '(' arg_list ')' | '(' expr ')' | literal | field
     # arg_list := expr (',' expr)*
-    
+
     def parse(self) -> Expr:
         """Parse the entire filter string into an AST.
-        
+
         Returns:
             Expr: The root node of the parsed expression tree.
-            
+
         Raises:
             ValueError: If the filter string has syntax errors or unexpected tokens.
         """
@@ -816,7 +824,7 @@ class _FilterParser:
 
     def _parse_or(self) -> Expr:
         """Parse OR expressions (lowest precedence).
-        
+
         Returns:
             Expr: The parsed OR expression.
         """
@@ -833,7 +841,7 @@ class _FilterParser:
 
     def _parse_and(self) -> Expr:
         """Parse AND expressions.
-        
+
         Returns:
             Expr: The parsed AND expression.
         """
@@ -850,7 +858,7 @@ class _FilterParser:
 
     def _parse_not(self) -> Expr:
         """Parse NOT expressions.
-        
+
         Returns:
             Expr: The parsed NOT expression.
         """
@@ -865,7 +873,7 @@ class _FilterParser:
 
     def _parse_cmp(self) -> Expr:
         """Parse comparison expressions (eq, ne, gt, ge, lt, le).
-        
+
         Returns:
             Expr: The parsed comparison or primary expression.
         """
@@ -884,10 +892,10 @@ class _FilterParser:
 
     def _parse_primary(self) -> Expr:
         """Parse primary expressions (function calls, parentheses, literals, fields).
-        
+
         Returns:
             Expr: The parsed primary expression.
-            
+
         Raises:
             ValueError: If an unexpected token is encountered or EOF is reached.
         """
@@ -934,13 +942,13 @@ class _FilterParser:
             return Literal(None)
 
         raise ValueError(f"Unexpected token: {tok.value}")
-    
+
     def _parse(self) -> Expr:
         """Parse an expression (internal method for recursive parsing).
-        
+
         Used internally for parsing function arguments and ensures proper
         precedence handling in recursive contexts.
-        
+
         Returns:
             Expr: The parsed expression.
         """

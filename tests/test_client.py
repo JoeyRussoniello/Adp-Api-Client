@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
-from requests.adapters import HTTPAdapter
 
 from adpapi.client import AdpApiClient, AdpCredentials
 

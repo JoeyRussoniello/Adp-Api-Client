@@ -4,6 +4,7 @@ This module provides session and request handling utilities including the ApiSes
 dataclass for managing authenticated HTTP sessions and the RequestMethod enum for
 specifying HTTP request types.
 """
+
 import logging
 from dataclasses import dataclass
 from enum import StrEnum
@@ -84,7 +85,7 @@ class ApiSession:
         if self.data is not None:
             kwargs["json"] = self.data
         response = request_fn(url, **kwargs)
-        
+
         try:
             response.raise_for_status()
 

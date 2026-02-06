@@ -34,7 +34,6 @@ Notes
 
 import json
 import logging
-import os
 import time
 
 from dotenv import load_dotenv
@@ -64,7 +63,7 @@ def main() -> None:
     # This does not override already-exported environment variables by default.
     load_dotenv()
     credentials = AdpCredentials.from_env()
-    
+
     # Define which fields to request from ADP and which endpoint to call.
     # These are ADP field paths; adjust them depending on your use case and permissions.
     desired_cols = [
@@ -75,23 +74,25 @@ def main() -> None:
         "workers/workerDates/originalHireDate",
         "workers/workAssignments/reportsTo",
     ]
-    endpoint = "/hr/v2/workers"
-    
+    endpoint = "/hr/v2/worrs"
+
     # Filter for just active employees
-    filters = FilterExpression.field("workers.workAssignments.assignmentStatus.statusCode.codeValue").eq("A")
+    filters = FilterExpression.field(
+        "workers.workAssignments.assignmentStatus.statusCode.codeValue"
+    ).eq("A")
     # Use the client as a context manager so any underlying session/resources are cleaned up.
-    
+
     with AdpApiClient(credentials) as api:
         start_time = time.perf_counter()
         # Call the endpoint and return worker data.
         # `masked=False` requests unmasked fields when your ADP permissions allow it.
         # `max_requests=1` is a safety guard for examples; remove/adjust for full exports.
         workers = api.call_endpoint(
-            endpoint, 
-            masked=True, 
-            page_size=10, 
-            max_requests = 1,
-            # select=desired_cols, 
+            endpoint,
+            masked=True,
+            page_size=10,
+            max_requests=1,
+            # select=desired_cols,
             filters=filters,
         )
 

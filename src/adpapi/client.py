@@ -4,6 +4,7 @@ This module provides the AdpApiClient class for authenticating with and making
 requests to the ADP Workforce Now API using OAuth 2.0 client credentials flow
 with certificate-based authentication.
 """
+
 import json
 import logging
 import os
@@ -25,43 +26,44 @@ DEFAULT_TIMEOUT = 30
 TOKEN_BUFFER_SECONDS = 300  # Refresh token 5 minutes before expiration
 
 
-CERT_DEFAULT = 'certificate.pem'
-KEY_DEFAULT = 'adp.key'
+CERT_DEFAULT = "certificate.pem"
+KEY_DEFAULT = "adp.key"
+
+
 @dataclass(frozen=True)
 class AdpCredentials:
     client_id: str
-    client_secret: str 
+    client_secret: str
     cert_path: Optional[str] = CERT_DEFAULT
     key_path: Optional[str] = KEY_DEFAULT
-    
+
     @staticmethod
-    def from_env() -> 'AdpCredentials':
+    def from_env() -> "AdpCredentials":
         client_id = os.getenv("CLIENT_ID")
         client_secret = os.getenv("CLIENT_SECRET")
 
         # Read optional mTLS certificate/key paths (defaults assume files in project root).
         cert_path = os.getenv("CERT_PATH")
         key_path = os.getenv("KEY_PATH")
-        
+
         if cert_path is None:
-            logger.warning(f'No environment variables found for CERT_PATH, defaulting to {CERT_DEFAULT}')
-        
+            logger.warning(
+                f"No environment variables found for CERT_PATH, defaulting to {CERT_DEFAULT}"
+            )
+
         if key_path is None:
             logger.warning(
                 f"No environment variables found for KEY_PATH, defaulting to {KEY_DEFAULT}"
             )
-            
-        return AdpCredentials(
-            client_id,
-            client_secret
-        )
-    
+
+        return AdpCredentials(client_id, client_secret)
+
 
 class AdpApiClient:
-    def __init__(
-        self, credentials: AdpCredentials
-    ):
-        if not os.path.exists(credentials.cert_path) or not os.path.exists(credentials.key_path):
+    def __init__(self, credentials: AdpCredentials):
+        if not os.path.exists(credentials.cert_path) or not os.path.exists(
+            credentials.key_path
+        ):
             logger.error("Missing Certificate or Key File.")
             raise FileNotFoundError("Certificate or key file not found.")
 
@@ -160,12 +162,14 @@ class AdpApiClient:
     def get_unmasked_headers(self) -> Dict[str, str]:
         return self._get_headers(False)
 
-    def _handle_filters(self, filters: Optional[Union[str, FilterExpression]] = None) -> str:
+    def _handle_filters(
+        self, filters: Optional[Union[str, FilterExpression]] = None
+    ) -> str:
         """Convert filter input (string or FilterExpression) to OData string.
-        
+
         Args:
             filters: Filter as string or FilterExpression object, or None
-            
+
         Returns:
             OData filter string, or empty string if no filters
         """
@@ -175,14 +179,15 @@ class AdpApiClient:
             try:
                 filters = FilterExpression.from_string(filters)
             except ValueError:
-                logger.error(f'Error parsing filter expression: {filters}')
+                logger.error(f"Error parsing filter expression: {filters}")
                 raise
-        
+
         # Remove outer parentheses added by BinaryOp if present
         odata_str = filters.to_odata()
         if odata_str.startswith("(") and odata_str.endswith(")"):
             odata_str = odata_str[1:-1]
         return odata_str
+
     def _clean_endpoint(self, endpoint: str) -> str:
         starts_with_base = endpoint.startswith(self.base_url)
         starts_with_path = endpoint.startswith("/")
@@ -196,10 +201,10 @@ class AdpApiClient:
             logger.warning(
                 "Full URL Specification not needed, prefer to use the endpoint string.\n"
                 f"(Ex: Prefer {endpoint} over {self.base_url}{endpoint})."
-            ) 
+            )
 
         return endpoint
-        
+
     def call_endpoint(
         self,
         endpoint: str,
@@ -216,7 +221,7 @@ class AdpApiClient:
             endpoint (str): API Endpoint or qualified URL to call
             select (List[str]): Table Columns to pull
             masked (bool, optional): Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.
-            filters (str | FilterExpression, optional): OData Filter Expression. Strings will be passed directly, 
+            filters (str | FilterExpression, optional): OData Filter Expression. Strings will be passed directly,
                 or OData strings can be automatically created from `adpapi.odata_filters.FilterExpression` objects
             timeout (int, optional): Time to wait on. Defaults to 30.
             page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.
@@ -235,8 +240,6 @@ class AdpApiClient:
                 "Page size > 100 not supported by API endpoint. Limiting to 100."
             )
             page_size = 100
-
-        
 
         # Output/Request Initialization
         endpoint = self._clean_endpoint(endpoint)
@@ -257,17 +260,17 @@ class AdpApiClient:
         call_session = ApiSession(
             self.session, self.cert, get_headers_fn, timeout=timeout
         )
-        
-        params = {'$top': page_size}
+
+        params = {"$top": page_size}
         if select:
-            logging.debug(f'Restricting OData Selection to {select}')
-            params['$select'] = select
+            logging.debug(f"Restricting OData Selection to {select}")
+            params["$select"] = select
         if filter_param:
-            logging.debug(f'Filtering Results according to OData query: {filter_param}')
-            params['$filter'] = filter_param
-        
+            logging.debug(f"Filtering Results according to OData query: {filter_param}")
+            params["$filter"] = filter_param
+
         while True:
-            params['$skip'] = skip
+            params["$skip"] = skip
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
             response = call_session.get(url)
