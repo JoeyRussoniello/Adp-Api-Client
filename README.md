@@ -1,6 +1,8 @@
 # adpapi
 Minimal Python client for the ADP Workforce Now API using OAuth2 client credentials + mutual TLS (mTLS).
 
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://JoeyRussoniello.github.io/Adp-Api-Client/)
+
 ## Install
 ```bash
 uv add adpapi

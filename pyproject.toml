@@ -21,6 +21,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/JoeyRussoniello/Adp-Api-Client"
+Documentation = "https://JoeyRussoniello.github.io/Adp-Api-Client/"
 
 
 [build-system]
