@@ -1,0 +1,2995 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../how-to-guides/">
+      
+      
+        <link rel="next" href="../explanation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Reference - ADP API Client Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ADP API Client Docs" class="md-header__button md-logo" aria-label="ADP API Client Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ADP API Client Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ADP API Client Docs" class="md-nav__button md-logo" aria-label="ADP API Client Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ADP API Client Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADP API Docs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-guides/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To Guides
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.client.AdpApiClient.call_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        call_endpoint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.contains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contains
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.endswith" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        endswith
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.eq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eq
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.ge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.gt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.isin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isin
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.le" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        le
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.lt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.ne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ne
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.startswith" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        startswith
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.to_odata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_odata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.logger.configure_logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        configure_logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts and Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.client.AdpApiClient.call_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        call_endpoint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.contains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contains
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.endswith" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        endswith
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.eq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eq
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.ge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.gt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.isin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isin
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.le" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        le
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.lt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.ne" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ne
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.startswith" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        startswith
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.odata_filters.Field.to_odata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_odata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adpapi.logger.configure_logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        configure_logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="api-reference">API Reference</h1>
+<h2 id="client">Client</h2>
+<p>The main entry point for interacting with the ADP API. Can be createdly manually, or <strong>using context management</strong></p>
+<pre><code class="language-python">from adpapi.client import AdpApiClient
+
+with AdpApiClient(client_id, client_secret, key_path, cert_path) as api:
+    api.call_endpoint(...)
+</code></pre>
+<p>The <code>AdpApiClient</code> surfaces one main entry point for all OData queries, <code>.call_endpoint()</code></p>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="adpapi.client.AdpApiClient.call_endpoint"></a>
+    <div class="doc doc-contents first">
+
+        <p>Call any Registered ADP Endpoint</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>endpoint</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>API Endpoint or qualified URL to call</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>select</code>
+            </td>
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Table Columns to pull</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>masked</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>filters</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | <a class="autorefs autorefs-internal" title="adpapi.odata_filters.FilterExpression" href="../explanation/#adpapi.odata_filters.FilterExpression">FilterExpression</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>OData Filter Expression. Strings will be passed directly, 
+or OData strings can be automatically created from <code>adpapi.odata_filters.FilterExpression</code> objects</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>timeout</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time to wait on. Defaults to 30.</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="adpapi.client.DEFAULT_TIMEOUT">DEFAULT_TIMEOUT</span></code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>page_size</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Amount of records to pull per API call (max 100). Defaults to 100.</p>
+              </div>
+            </td>
+            <td>
+                  <code>100</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_requests</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="int">int</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum number of requests to make (for quick testing). Defaults to None.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When given an endpoint not following the call convention</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List[Dict]: The collection of API responses</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\client.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">call_endpoint</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FilterExpression</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">masked</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT</span><span class="p">,</span>
+    <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">max_requests</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call any Registered ADP Endpoint</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        endpoint (str): API Endpoint or qualified URL to call</span>
+<span class="sd">        select (List[str]): Table Columns to pull</span>
+<span class="sd">        masked (bool, optional): Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.</span>
+<span class="sd">        filters (str | FilterExpression, optional): OData Filter Expression. Strings will be passed directly, </span>
+<span class="sd">            or OData strings can be automatically created from `adpapi.odata_filters.FilterExpression` objects</span>
+<span class="sd">        timeout (int, optional): Time to wait on. Defaults to 30.</span>
+<span class="sd">        page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.</span>
+<span class="sd">        max_requests (Optional[int], optional): Maximum number of requests to make (for quick testing). Defaults to None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: When given an endpoint not following the call convention</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[Dict]: The collection of API responses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Request Cleanup and Validation Logic</span>
+    <span class="k">if</span> <span class="n">page_size</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Page size &gt; 100 not supported by API endpoint. Limiting to 100.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">page_size</span> <span class="o">=</span> <span class="mi">100</span>
+
+
+
+    <span class="c1"># Output/Request Initialization</span>
+    <span class="n">endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="n">endpoint</span>
+    <span class="n">filter_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+    <span class="c1"># Populate here instead of mutable default arguments</span>
+    <span class="k">if</span> <span class="n">select</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">select</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">skip</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">masked</span><span class="p">:</span>
+        <span class="n">get_headers_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_masked_headers</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_headers_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unmasked_headers</span>
+
+    <span class="n">call_session</span> <span class="o">=</span> <span class="n">ApiSession</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="n">get_headers_fn</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+    <span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;$top&#39;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">select</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Restricting OData Selection to </span><span class="si">{</span><span class="n">select</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;$select&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">select</span>
+    <span class="k">if</span> <span class="n">filter_param</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Filtering Results according to OData query: </span><span class="si">{</span><span class="n">filter_param</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;$filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_param</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;$skip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skip</span>
+        <span class="n">call_session</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_valid_token</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">call_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;End of pagination reached (204 No Content)&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse JSON response: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+        <span class="k">if</span> <span class="n">max_requests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_requests</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max Requests reached: </span><span class="si">{</span><span class="n">max_requests</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="n">skip</span> <span class="o">+=</span> <span class="n">page_size</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><h2 id="filters">Filters</h2>
+<p>OData filter expressions for querying. Fields can be creating manually, or by using the <code>FilterExpression</code> constructor</p>
+<pre><code class="language-python">from adpapi.odata_filters import FilterExpression, Field
+
+# Option 1 Construct Using FilterExpression
+filter = FilterExpression.field('fieldName').eq('targetValue')
+
+# Option 2: Construct using the Field class directly
+field = Field('fieldName')
+</code></pre>
+<p>See More information on what OData Operations are supported using <code>Field</code>
+</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="adpapi.odata_filters.Field"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="adpapi.odata_filters.Expr">Expr</span></code></p>
+
+
+
+        <p>Represents a field reference in an OData filter expression.</p>
+<p>Fields are identified by their path (e.g., 'worker.person.firstName').
+This class provides a fluent API for building filter conditions on fields.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="adpapi.odata_filters.Field.path">path</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The dot-separated path to the field, supporting nested properties.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>field = Field('worker.hireDate')
+field.eq('2020-01-01').to_odata()
+"(worker/hireDate eq '2020-01-01')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Field</span><span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a field reference in an OData filter expression.</span>
+
+<span class="sd">    Fields are identified by their path (e.g., &#39;worker.person.firstName&#39;).</span>
+<span class="sd">    This class provides a fluent API for building filter conditions on fields.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        path (str): The dot-separated path to the field, supporting nested properties.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; field = Field(&#39;worker.hireDate&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; field.eq(&#39;2020-01-01&#39;).to_odata()</span>
+<span class="sd">        &quot;(worker/hireDate eq &#39;2020-01-01&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="c1"># comparisons</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an equality comparison filter (field = value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Can be string, number, boolean, or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the equality condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).eq(&#39;Active&#39;).to_odata()</span>
+<span class="sd">            &quot;(status eq &#39;Active&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a not-equal comparison filter (field != value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Can be string, number, boolean, or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the not-equal condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).ne(&#39;Inactive&#39;).to_odata()</span>
+<span class="sd">            &quot;(status ne &#39;Inactive&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ne&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">gt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a greater-than comparison filter (field &gt; value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the greater-than condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;salary&#39;).gt(50000).to_odata()</span>
+<span class="sd">            &quot;(salary gt 50000)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;gt&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a greater-than-or-equal comparison filter (field &gt;= value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the greater-than-or-equal condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;hireDate&#39;).ge(&#39;2020-01-01&#39;).to_odata()</span>
+<span class="sd">            &quot;(hireDate ge &#39;2020-01-01&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ge&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">lt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a less-than comparison filter (field &lt; value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the less-than condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;salary&#39;).lt(100000).to_odata()</span>
+<span class="sd">            &quot;(salary lt 100000)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;lt&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a less-than-or-equal comparison filter (field &lt;= value).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BinaryOp: A binary operation representing the less-than-or-equal condition.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;retirementDate&#39;).le(&#39;2025-12-31&#39;).to_odata()</span>
+<span class="sd">            &quot;(retirementDate le &#39;2025-12-31&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;le&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="c1"># string functions</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a substring contains filter for string fields.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The substring to search for within the field value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Func: A function call representing the contains operation.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;lastName&#39;).contains(&#39;Smith&#39;).to_odata()</span>
+<span class="sd">            &quot;contains(lastName, &#39;Smith&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;contains&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">startswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a string starts-with filter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The prefix to search for at the start of the field value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Func: A function call representing the startswith operation.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;firstName&#39;).startswith(&#39;John&#39;).to_odata()</span>
+<span class="sd">            &quot;startswith(firstName, &#39;John&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;startswith&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">endswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a string ends-with filter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The suffix to search for at the end of the field value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Func: A function call representing the endswith operation.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;email&#39;).endswith(&#39;@company.com&#39;).to_odata()</span>
+<span class="sd">            &quot;endswith(email, &#39;@company.com&#39;)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;endswith&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+
+    <span class="c1"># emulate IN as disjunction</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Expr&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an IN filter for multiple values (field IN (val1, val2, ...)).</span>
+
+<span class="sd">        Since OData v4 doesn&#39;t have a native IN operator, this is implemented as</span>
+<span class="sd">        a series of OR conditions joined together.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            values: A list of values to check against. If empty, returns false.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Expr: An expression representing the IN operation. For empty lists,</span>
+<span class="sd">                  returns an always-false condition (1 eq 0).</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; statuses = [&#39;Active&#39;, &#39;OnLeave&#39;, &#39;Pending&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).isin(statuses).to_odata()</span>
+<span class="sd">            &quot;((status eq &#39;Active&#39;) or ((status eq &#39;OnLeave&#39;) or (status eq &#39;Pending&#39;)))&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+            <span class="c1"># empty IN -&gt; false; represent as (1 eq 0)</span>
+            <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="n">clause</span> <span class="o">=</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="n">clause</span> <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">clause</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">expr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_odata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert this field reference to an OData path string.</span>
+
+<span class="sd">        Converts dot notation to forward slash notation for OData v4 compliance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The OData-compliant field path.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; Field(&#39;worker.person.firstName&#39;).to_odata()</span>
+<span class="sd">            &#39;worker/person/firstName&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert dot notation to forward slash for OData v4 compliance</span>
+        <span class="c1"># Input: &quot;workers.workAssignments.reportsTo.positionID&quot;</span>
+        <span class="c1"># Output: &quot;workers/workAssignments/reportsTo/positionID&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.contains" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">contains</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a substring contains filter for string fields.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The substring to search for within the field value.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Func</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.Func">Func</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A function call representing the contains operation.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('lastName').contains('Smith').to_odata()
+"contains(lastName, 'Smith')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a substring contains filter for string fields.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The substring to search for within the field value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Func: A function call representing the contains operation.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;lastName&#39;).contains(&#39;Smith&#39;).to_odata()</span>
+<span class="sd">        &quot;contains(lastName, &#39;Smith&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;contains&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.endswith" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">endswith</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a string ends-with filter.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The suffix to search for at the end of the field value.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Func</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.Func">Func</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A function call representing the endswith operation.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('email').endswith('@company.com').to_odata()
+"endswith(email, '@company.com')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">endswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a string ends-with filter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The suffix to search for at the end of the field value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Func: A function call representing the endswith operation.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;email&#39;).endswith(&#39;@company.com&#39;).to_odata()</span>
+<span class="sd">        &quot;endswith(email, &#39;@company.com&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;endswith&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.eq" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">eq</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an equality comparison filter (field = value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Can be string, number, boolean, or None.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the equality condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('status').eq('Active').to_odata()
+"(status eq 'Active')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an equality comparison filter (field = value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Can be string, number, boolean, or None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the equality condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).eq(&#39;Active&#39;).to_odata()</span>
+<span class="sd">        &quot;(status eq &#39;Active&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.ge" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">ge</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a greater-than-or-equal comparison filter (field &gt;= value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Typically a number or date string.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the greater-than-or-equal condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('hireDate').ge('2020-01-01').to_odata()
+"(hireDate ge '2020-01-01')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a greater-than-or-equal comparison filter (field &gt;= value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the greater-than-or-equal condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;hireDate&#39;).ge(&#39;2020-01-01&#39;).to_odata()</span>
+<span class="sd">        &quot;(hireDate ge &#39;2020-01-01&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ge&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.gt" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">gt</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a greater-than comparison filter (field &gt; value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Typically a number or date string.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the greater-than condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('salary').gt(50000).to_odata()
+"(salary gt 50000)"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a greater-than comparison filter (field &gt; value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the greater-than condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;salary&#39;).gt(50000).to_odata()</span>
+<span class="sd">        &quot;(salary gt 50000)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;gt&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.isin" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">isin</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an IN filter for multiple values (field IN (val1, val2, ...)).</p>
+<p>Since OData v4 doesn't have a native IN operator, this is implemented as
+a series of OR conditions joined together.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>values</code>
+            </td>
+            <td>
+                  <code><span title="typing.List">List</span>[<span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of values to check against. If empty, returns false.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Expr</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.Expr">Expr</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An expression representing the IN operation. For empty lists,
+  returns an always-false condition (1 eq 0).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>statuses = ['Active', 'OnLeave', 'Pending']
+FilterExpression.field('status').isin(statuses).to_odata()
+"((status eq 'Active') or ((status eq 'OnLeave') or (status eq 'Pending')))"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">isin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Expr&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an IN filter for multiple values (field IN (val1, val2, ...)).</span>
+
+<span class="sd">    Since OData v4 doesn&#39;t have a native IN operator, this is implemented as</span>
+<span class="sd">    a series of OR conditions joined together.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        values: A list of values to check against. If empty, returns false.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Expr: An expression representing the IN operation. For empty lists,</span>
+<span class="sd">              returns an always-false condition (1 eq 0).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; statuses = [&#39;Active&#39;, &#39;OnLeave&#39;, &#39;Pending&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).isin(statuses).to_odata()</span>
+<span class="sd">        &quot;((status eq &#39;Active&#39;) or ((status eq &#39;OnLeave&#39;) or (status eq &#39;Pending&#39;)))&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+        <span class="c1"># empty IN -&gt; false; represent as (1 eq 0)</span>
+        <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="n">clause</span> <span class="o">=</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="n">clause</span> <span class="k">if</span> <span class="n">expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">clause</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">expr</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.le" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">le</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a less-than-or-equal comparison filter (field &lt;= value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Typically a number or date string.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the less-than-or-equal condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('retirementDate').le('2025-12-31').to_odata()
+"(retirementDate le '2025-12-31')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">le</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a less-than-or-equal comparison filter (field &lt;= value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the less-than-or-equal condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;retirementDate&#39;).le(&#39;2025-12-31&#39;).to_odata()</span>
+<span class="sd">        &quot;(retirementDate le &#39;2025-12-31&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;le&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.lt" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">lt</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a less-than comparison filter (field &lt; value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Typically a number or date string.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the less-than condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('salary').lt(100000).to_odata()
+"(salary lt 100000)"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">lt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a less-than comparison filter (field &lt; value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Typically a number or date string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the less-than condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;salary&#39;).lt(100000).to_odata()</span>
+<span class="sd">        &quot;(salary lt 100000)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;lt&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.ne" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">ne</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a not-equal comparison filter (field != value).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to compare against. Can be string, number, boolean, or None.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BinaryOp</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.BinaryOp">BinaryOp</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A binary operation representing the not-equal condition.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('status').ne('Inactive').to_odata()
+"(status ne 'Inactive')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BinaryOp&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a not-equal comparison filter (field != value).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The value to compare against. Can be string, number, boolean, or None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BinaryOp: A binary operation representing the not-equal condition.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;status&#39;).ne(&#39;Inactive&#39;).to_odata()</span>
+<span class="sd">        &quot;(status ne &#39;Inactive&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BinaryOp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;ne&quot;</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.startswith" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">startswith</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a string starts-with filter.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>val</code>
+            </td>
+            <td>
+                  <code><span title="typing.Any">Any</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The prefix to search for at the start of the field value.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Func</code></td>            <td>
+                  <code><span title="adpapi.odata_filters.Func">Func</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A function call representing the startswith operation.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>FilterExpression.field('firstName').startswith('John').to_odata()
+"startswith(firstName, 'John')"</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">startswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Func&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a string starts-with filter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: The prefix to search for at the start of the field value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Func: A function call representing the startswith operation.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; FilterExpression.field(&#39;firstName&#39;).startswith(&#39;John&#39;).to_odata()</span>
+<span class="sd">        &quot;startswith(firstName, &#39;John&#39;)&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Func</span><span class="p">(</span><span class="s2">&quot;startswith&quot;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="n">val</span><span class="p">)])</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="adpapi.odata_filters.Field.to_odata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_odata</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert this field reference to an OData path string.</p>
+<p>Converts dot notation to forward slash notation for OData v4 compliance.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>str</code></td>            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The OData-compliant field path.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>Field('worker.person.firstName').to_odata()
+'worker/person/firstName'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\odata_filters.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_odata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert this field reference to an OData path string.</span>
+
+<span class="sd">    Converts dot notation to forward slash notation for OData v4 compliance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The OData-compliant field path.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; Field(&#39;worker.person.firstName&#39;).to_odata()</span>
+<span class="sd">        &#39;worker/person/firstName&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert dot notation to forward slash for OData v4 compliance</span>
+    <span class="c1"># Input: &quot;workers.workAssignments.reportsTo.positionID&quot;</span>
+    <span class="c1"># Output: &quot;workers/workAssignments/reportsTo/positionID&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="logging">Logging</h2>
+<p>Quick basic logging configuration with a rotating file handler and stream handling.</p>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="adpapi.logger.configure_logging"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src\adpapi\logger.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_logging</span><span class="p">():</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;app.log&quot;</span><span class="p">,</span>
+        <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Add console handler</span>
+    <span class="n">console_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
