@@ -75,22 +75,22 @@ class ApiSession:
         request_fn = self._get_request_function(method)
         # Generate headers on call time for up-to-date token
         headers = self.get_headers()
+        kwargs = {
+            "headers": headers,
+            "params": self.params,
+            "cert": self.cert,
+            "timeout": self.timeout,
+        }
+        if self.data is not None:
+            kwargs["json"] = self.data
+        response = request_fn(url, **kwargs)
+        
         try:
-            kwargs = {
-                "headers": headers,
-                "params": self.params,
-                "cert": self.cert,
-                "timeout": self.timeout,
-            }
-            if self.data is not None:
-                kwargs["json"] = self.data
-
-            response = request_fn(url, **kwargs)
             response.raise_for_status()
 
         except requests.RequestException as e:
             logger.error(
-                f"Request failed for {method} request to url: {url} with params {self.params}:\n{e}"
+                f"Request failed for {method} request to url: {url} with params {self.params}\nResponse Headers: {response.headers}:\n{e}"
             )
             raise
 
