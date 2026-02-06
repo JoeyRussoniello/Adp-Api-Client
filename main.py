@@ -39,7 +39,7 @@ import time
 
 from dotenv import load_dotenv
 
-from adpapi.client import AdpApiClient
+from adpapi.client import AdpApiClient, AdpCredentials
 from adpapi.logger import configure_logging
 from adpapi.odata_filters import FilterExpression
 
@@ -63,15 +63,8 @@ def main() -> None:
     # Load variables from a `.env` file (if present) into the process environment.
     # This does not override already-exported environment variables by default.
     load_dotenv()
-
-    # Read required ADP OAuth client credentials from environment.
-    client_id = os.getenv("CLIENT_ID")
-    client_secret = os.getenv("CLIENT_SECRET")
-
-    # Read optional mTLS certificate/key paths (defaults assume files in project root).
-    cert_path = os.getenv("CERT_PATH", "certificate.pem")
-    key_path = os.getenv("KEY_PATH", "adp.key")
-
+    credentials = AdpCredentials.from_env()
+    
     # Define which fields to request from ADP and which endpoint to call.
     # These are ADP field paths; adjust them depending on your use case and permissions.
     desired_cols = [
@@ -85,26 +78,28 @@ def main() -> None:
     endpoint = "/hr/v2/workers"
     
     # Filter for just active employees
-    filters = FilterExpression.field(
-            "workers.workAssignments.assignmentStatus.statusCode.codeValue"
-    ).eq("A")
+    filters = FilterExpression.field("workers.workAssignments.assignmentStatus.statusCode.codeValue").eq("A")
     # Use the client as a context manager so any underlying session/resources are cleaned up.
-    with AdpApiClient(client_id, client_secret, cert_path, key_path) as api:
+    
+    with AdpApiClient(credentials) as api:
         start_time = time.perf_counter()
-
         # Call the endpoint and return worker data.
         # `masked=False` requests unmasked fields when your ADP permissions allow it.
         # `max_requests=1` is a safety guard for examples; remove/adjust for full exports.
         workers = api.call_endpoint(
-            endpoint, select = desired_cols, masked=True, page_size = 100, max_requests=1,
-            filters=filters
+            endpoint, 
+            masked=True, 
+            page_size=10, 
+            max_requests = 1,
+            # select=desired_cols, 
+            filters=filters,
         )
 
         elapsed = time.perf_counter() - start_time
         logger.debug("Processed worker export in %.2f seconds.", elapsed)
 
     # Persist the returned JSON response locally for inspection / downstream processing.
-    file_path = "worker_meta_data.json"
+    file_path = "worker_data.json"
     with open(file_path, mode="w", encoding="utf-8") as file:
         json.dump(workers, file, indent=2)
     logger.info("Wrote worker data to %s", file_path)
