@@ -511,14 +511,15 @@
 <h1 id="how-to-guides">How-To Guides</h1>
 <h2 id="authenticate-with-the-api">Authenticate with the API</h2>
 <p>The ADP API Client uses OAuth 2.0 with certificate-based authentication:</p>
-<pre><code class="language-python">from adpapi.client import AdpApiClient
+<pre><code class="language-python">from adpapi.client import AdpApiClient, AdpCredentials
 
-client = AdpApiClient(
-    client_id=&quot;your_client_id&quot;,
-    client_secret=&quot;your_client_secret&quot;,
-    cert_path=&quot;path/to/cert.pem&quot;,
-    key_path=&quot;path/to/key.pem&quot;
+credentials = AdpCredentials(
+    client_id = 'your_client_id',
+    client_secret = 'your_client_secret',
+    cert_path = 'path/to/cert.pem', # Optional
+    key_path = 'path/to/adp.key' # Optional
 )
+client = AdpApiClient(credentials)
 </code></pre>
 <h2 id="filter-results-with-odata">Filter Results with OData</h2>
 <p>Use the FilterExpression class to build complex OData queries with <code>call_endpoint</code>:</p>
