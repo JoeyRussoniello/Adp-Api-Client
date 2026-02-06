@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import time
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import requests
@@ -24,20 +25,51 @@ DEFAULT_TIMEOUT = 30
 TOKEN_BUFFER_SECONDS = 300  # Refresh token 5 minutes before expiration
 
 
+CERT_DEFAULT = 'certificate.pem'
+KEY_DEFAULT = 'adp.key'
+@dataclass(frozen=True)
+class AdpCredentials:
+    client_id: str
+    client_secret: str 
+    cert_path: Optional[str] = CERT_DEFAULT
+    key_path: Optional[str] = KEY_DEFAULT
+    
+    @staticmethod
+    def from_env():
+        client_id = os.getenv("CLIENT_ID")
+        client_secret = os.getenv("CLIENT_SECRET")
+
+        # Read optional mTLS certificate/key paths (defaults assume files in project root).
+        cert_path = os.getenv("CERT_PATH")
+        key_path = os.getenv("KEY_PATH")
+        
+        if cert_path is None:
+            logger.warning(f'No environment variables found for CERT_PATH, defaulting to {CERT_DEFAULT}')
+        
+        if key_path is None:
+            logger.warning(
+                f"No environment variables found for KEY_PATH, defaulting to {KEY_DEFAULT}"
+            )
+            
+        return AdpCredentials(
+            client_id,
+            client_secret
+        )
+    
+
 class AdpApiClient:
     def __init__(
-        self, client_id: str, client_secret: str, cert_path: str, key_path: str
+        self, credentials: AdpCredentials
     ):
-        if not all([client_id, client_secret, cert_path, key_path]):
-            raise ValueError("All credentials and paths must be provided.")
-        if not os.path.exists(cert_path) or not os.path.exists(key_path):
+        if not os.path.exists(credentials.cert_path) or not os.path.exists(credentials.key_path):
+            logger.error("Missing Certificate or Key File.")
             raise FileNotFoundError("Certificate or key file not found.")
 
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.cert_path = cert_path
-        self.key_path = key_path
-        self.cert = (cert_path, key_path)
+        self.client_id = credentials.client_id
+        self.client_secret = credentials.client_secret
+        self.cert_path = credentials.cert_path
+        self.key_path = credentials.key_path
+        self.cert = (self.cert_path, self.key_path)
         self.session = requests.Session()
         self._setup_retry_strategy()
 
