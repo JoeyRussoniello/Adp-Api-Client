@@ -1,3 +1,9 @@
+"""Session management and API request utilities for the ADP API client.
+
+This module provides session and request handling utilities including the ApiSession
+dataclass for managing authenticated HTTP sessions and the RequestMethod enum for
+specifying HTTP request types.
+"""
 import logging
 from dataclasses import dataclass
 from enum import StrEnum

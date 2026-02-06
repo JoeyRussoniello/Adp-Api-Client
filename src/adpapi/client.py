@@ -1,3 +1,9 @@
+"""ADP API client for interacting with the ADP Workforce Now API.
+
+This module provides the AdpApiClient class for authenticating with and making
+requests to the ADP Workforce Now API using OAuth 2.0 client credentials flow
+with certificate-based authentication.
+"""
 import json
 import logging
 import os

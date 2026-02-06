@@ -1,3 +1,8 @@
+"""Logging configuration for the ADP API client.
+
+This module provides utilities for setting up and configuring logging
+for the ADP API client, including file and console handlers.
+"""
 import logging
 
 
