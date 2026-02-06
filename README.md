@@ -28,7 +28,7 @@ KEY_PATH=adp.key
 import os
 from dotenv import load_dotenv
 
-from adpapi.client import AdpApiClient
+from adpapi.client import AdpApiClient, AdpCredentials
 from adpapi.logger import configure_logging
 
 # Optional helper: Configure logger with file handlers and stream handling
@@ -44,6 +44,9 @@ cols = [
     "workers/businessCommunication/emails",
 ]
 
+# Load API Credentials from environment
+credentials = AdpCredentials.from_env()
+
 # Define your API Client
 with AdpApiClient(
     client_id=os.environ["CLIENT_ID"],
@@ -58,8 +61,6 @@ with AdpApiClient(
         page_size=100,     # ADP max
         max_requests=1,    # increase/remove for full exports
     )
-
-print(len(workers))
 ```
 
 ## Filtering with OData

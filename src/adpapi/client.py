@@ -35,7 +35,7 @@ class AdpCredentials:
     key_path: Optional[str] = KEY_DEFAULT
     
     @staticmethod
-    def from_env():
+    def from_env() -> 'AdpCredentials':
         client_id = os.getenv("CLIENT_ID")
         client_secret = os.getenv("CLIENT_SECRET")
 
