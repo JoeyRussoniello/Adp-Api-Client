@@ -475,14 +475,6 @@ class UnaryOp(Expr):
 class FilterExpression(Expr):
     """Public API for creating and managing OData filter expressions.
     
-    FilterExpression is the main entry point for users. It provides a fluent,
-    chainable API for building OData v4 filter strings programmatically, as well
-    as parsing existing filter strings.
-    
-    This class wraps an internal Expr AST node and delegates rendering to it.
-    All logical operators (&, |, ~) return new FilterExpression instances,
-    maintaining a clean public API.
-    
     Attributes:
         _node (Expr): The internal AST node representing the expression.
         

@@ -184,6 +184,8 @@ class AdpApiClient:
             endpoint (str): API Endpoint or qualified URL to call
             select (List[str]): Table Columns to pull
             masked (bool, optional): Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.
+            filters (str | FilterExpression, optional): OData Filter Expression. Strings will be passed directly, 
+                or OData strings can be automatically created from `adpapi.odata_filters.FilterExpression` objects
             timeout (int, optional): Time to wait on. Defaults to 30.
             page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.
             max_requests (Optional[int], optional): Maximum number of requests to make (for quick testing). Defaults to None.
