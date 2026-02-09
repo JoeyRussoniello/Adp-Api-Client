@@ -5,6 +5,7 @@ dataclass for managing authenticated HTTP sessions and the RequestMethod enum fo
 specifying HTTP request types.
 """
 
+import json
 import logging
 from dataclasses import dataclass
 from enum import StrEnum
@@ -90,8 +91,13 @@ class ApiSession:
             response.raise_for_status()
 
         except requests.RequestException as e:
+            headers = dict(response.headers)
+            data = response.json()
             logger.error(
-                f"Request failed for {method} request to url: {url} with params {self.params}\nResponse Headers: {response.headers}:\n{e}"
+                f"Request failed for {method} request to url: {url} with params {self.params}\n"
+                f"Response Headers: {json.dumps(headers, indent = 2)}\n"
+                f"Response Body: {json.dumps(data, indent = 2)}\n"
+                f"Error:\n{e}"
             )
             raise
 
