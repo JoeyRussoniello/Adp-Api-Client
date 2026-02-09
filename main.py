@@ -70,11 +70,13 @@ def main() -> None:
         "workers/associateOID",
         "workers/person/legalName",
         "workers/businessCommunication/emails",
+        "workers/person/preferredGenderPronounCode",
         "workers/person/birthDate",
         "workers/workerDates/originalHireDate",
         "workers/workAssignments/reportsTo",
+        "workers/workAssignments/assignmentStatus",
     ]
-    endpoint = "/hr/v2/worrs"
+    endpoint = "/hr/v2/workers"
 
     # Filter for just active employees
     filters = FilterExpression.field(
