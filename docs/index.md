@@ -13,8 +13,9 @@ Welcome to the ADP API Client documentation. This project provides a Python clie
 
 - OAuth 2.0 client credentials authentication with certificate support
 - Automatic token management and refresh
-- Built-in retry logic and session management
-- OData filter support for flexible queries
+- Built-in retry logic with exponential backoff
+- Paginated OData queries via `call_endpoint`
+- Direct REST calls with path parameter substitution via `call_rest_endpoint`
 - Comprehensive logging for debugging
 
 ## Use Case
@@ -107,10 +108,10 @@ from adpapi.client import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
-endpoint = 'hr/v2/workers
+endpoint = '/hr/v2/workers'
 
 with AdpApiClient(credentials) as api:
-    results = api.call_endpoint(endpoint, select = ['workers/person/birthDate'], page_size = 1, max_requests = 1)
+    results = api.call_endpoint(endpoint, select=['workers/person/birthDate'], page_size=1, max_requests=1)
 
 print(results)
 ```

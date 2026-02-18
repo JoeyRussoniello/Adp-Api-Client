@@ -24,8 +24,16 @@ creds = AdpCredentials.from_env()
 ```
 
 > *NOTE*: `.from_env` expects the following environment variables
-> - `CLIENT_ID` and `CLIENT_SECRET`, mandatory, links to the API proejct
+> - `CLIENT_ID` and `CLIENT_SECRET`, mandatory, link to the API project
 > - `CERT_PATH` and `KEY_PATH`, optional, default to `certificate.pem` and `adp.key`, respectively if not provided
+
+## `call_endpoint` vs `call_rest_endpoint`
+
+The client exposes two methods that serve different purposes:
+
+**`call_endpoint`** — for paginated OData endpoints. Use this when you want to list or search records. It automatically handles `$top`/`$skip` pagination and supports `$select` and `$filter` query parameters.
+
+**`call_rest_endpoint`** — for direct resource lookups. Use this when you already know the resource identifier and want to fetch it by ID. It supports path parameter templates (e.g. `/hr/v2/workers/{associateOID}`) and can batch-fetch a list of IDs in a single call.
 
 ## OData Filtering
 

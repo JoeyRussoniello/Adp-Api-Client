@@ -8,7 +8,7 @@ To use the `AdpApiClient` you first must configure your API credentials. These c
 
 ## Client
 
-The main entry point for interacting with the ADP API. Can be createdly manually, or **using context management**
+The main entry point for interacting with the ADP API. Using a context manager is **recommended** so the HTTP session is always closed cleanly:
 
 ```python
 from adpapi.client import AdpApiClient, AdpCredentials
@@ -18,12 +18,13 @@ credentials = AdpCredentials(
 )
 with AdpApiClient(credentials) as api:
     api.call_endpoint(...)
+    api.call_rest_endpoint(...)
 ```
 
 The `AdpApiClient` surfaces two main entry points:
 
-- `.call_endpoint()` — for paginated OData queries
-- `.call_rest_endpoint()` — for direct REST API calls with path parameter substitution
+- `.call_endpoint()` — for paginated OData queries (lists, searches)
+- `.call_rest_endpoint()` — for direct resource lookups by ID, with path parameter substitution
 
 ::: adpapi.client.AdpApiClient.call_endpoint
 
@@ -31,19 +32,20 @@ The `AdpApiClient` surfaces two main entry points:
 
 ## Filters
 
-OData filter expressions for querying. Fields can be creating manually, or by using the `FilterExpression` constructor
+OData filter expressions for querying. Use `FilterExpression.field()` as the primary entry point:
 
 ```python
-from adpapi.odata_filters import FilterExpression, Field
+from adpapi.odata_filters import FilterExpression
 
-# Option 1 Construct Using FilterExpression
+# Recommended: use FilterExpression.field()
 filter = FilterExpression.field('fieldName').eq('targetValue')
 
-# Option 2: Construct using the Field class directly
+# Advanced: construct a Field directly for reuse
+from adpapi.odata_filters import Field
 field = Field('fieldName')
 ```
 
-See More information on what OData Operations are supported using `Field`
+See full details on supported OData operations:
 ::: adpapi.odata_filters.Field
 
 

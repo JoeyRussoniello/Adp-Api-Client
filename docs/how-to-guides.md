@@ -2,32 +2,63 @@
 
 ## Authenticate with the API
 
-The ADP API Client uses OAuth 2.0 with certificate-based authentication:
+The recommended approach is to load credentials from environment variables (see [Getting Started](tutorials.md)):
 
 ```python
+from dotenv import load_dotenv
 from adpapi.client import AdpApiClient, AdpCredentials
 
+load_dotenv()
+credentials = AdpCredentials.from_env()
+client = AdpApiClient(credentials)
+```
+
+You can also construct credentials manually if you prefer not to use environment variables:
+
+```python
 credentials = AdpCredentials(
-    client_id = 'your_client_id',
-    client_secret = 'your_client_secret',
-    cert_path = 'path/to/cert.pem', # Optional
-    key_path = 'path/to/adp.key' # Optional
+    client_id='your_client_id',
+    client_secret='your_client_secret',
+    cert_path='path/to/cert.pem',  # optional
+    key_path='path/to/adp.key'    # optional
 )
 client = AdpApiClient(credentials)
 ```
 
 ## Filter Results with OData
 
-Use the FilterExpression class to build complex OData queries with `call_endpoint`:
+Use `FilterExpression.field()` to build type-safe OData filters to pass to `call_endpoint`:
 
 ```python
 from adpapi.odata_filters import FilterExpression
 
-# Create filters and combine them
-filter_expr = FilterExpression('targetField').eq('DesiredValue')  # Build your filter
+# Simple equality filter
+filter_expr = FilterExpression.field('workers/workAssignments/assignmentStatus/statusCode/codeValue').eq('Active')
+
 results = client.call_endpoint(
     endpoint="/hr/v2/workers",
     filters=filter_expr
+)
+```
+
+Combine multiple conditions with `&` (AND) and `|` (OR):
+
+```python
+active = FilterExpression.field('workers/workAssignments/assignmentStatus/statusCode/codeValue').eq('Active')
+senior = FilterExpression.field('workers/workAssignments/seniorityDate').lt('2015-01-01')
+
+results = client.call_endpoint(
+    endpoint="/hr/v2/workers",
+    filters=active & senior
+)
+```
+
+You can also pass a raw OData string if you already have one:
+
+```python
+results = client.call_endpoint(
+    endpoint="/hr/v2/workers",
+    filters="workers/workAssignments/assignmentStatus/statusCode/codeValue eq 'Active'"
 )
 ```
 
@@ -63,18 +94,14 @@ results = client.call_rest_endpoint(
 
 ## Configure Logging
 
-Set up application logging:
+Enable logging to see token refresh events, pagination progress, and request errors:
 
 ```python
 from adpapi.logger import configure_logging
 
-configure_logging()
+configure_logging()  # logs to console and a rotating file by default
 ```
 
 ## Manage Sessions
 
-Understand how sessions are managed internally:
-
-::: adpapi.sessions.RequestMethod
-
-::: adpapi.sessions.ApiSession
+`ApiSession` is used internally by `AdpApiClient` — you don't need to interact with it directly. It handles connection pooling, certificate attachment, and header generation on every request. See the [Concepts page](explanation.md) for more detail.
