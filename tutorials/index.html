@@ -256,6 +256,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#setting-up-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Credentials
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#your-first-request" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -264,22 +275,38 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Your First Request">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#more-about-call_endpoint" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fetching-a-single-worker-by-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        More about call_endpoint
+        Fetching a Single Worker by ID
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-the-right-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Method
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
   
 </li>
       
@@ -432,6 +459,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#setting-up-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting Up Credentials
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#your-first-request" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -440,22 +478,38 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Your First Request">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#more-about-call_endpoint" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fetching-a-single-worker-by-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        More about call_endpoint
+        Fetching a Single Worker by ID
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-the-right-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the Right Method
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
   
 </li>
       
@@ -500,33 +554,86 @@
 
 <h1 id="getting-started">Getting Started</h1>
 <h2 id="installation">Installation</h2>
-<p>Install the ADP API Client using pip or uv:</p>
+<p>Install the ADP API Client using pip:</p>
 <pre><code class="language-bash">pip install adpapi
 </code></pre>
-<h2 id="your-first-request">Your First Request</h2>
-<p>Here's a simple example to get you started with the <code>call_endpoint</code> method:</p>
-<pre><code class="language-python">from adpapi.client import AdpApiClient, AdpCredentials
+<h2 id="setting-up-credentials">Setting Up Credentials</h2>
+<p>ADP requires an OAuth 2.0 client ID/secret plus a mutual-TLS certificate and key file. The recommended approach is to load credentials from environment variables:</p>
+<pre><code class="language-bash"># .env
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+CERT_PATH=certificate.pem   # optional, defaults to certificate.pem
+KEY_PATH=adp.key            # optional, defaults to adp.key
+</code></pre>
+<pre><code class="language-python">from dotenv import load_dotenv
+from adpapi.client import AdpApiClient, AdpCredentials
 
-credentials = AdpCredentials(
+load_dotenv()
+credentials = AdpCredentials.from_env()
+</code></pre>
+<p>You can also pass credentials directly:</p>
+<pre><code class="language-python">credentials = AdpCredentials(
     client_id=&quot;your_client_id&quot;,
     client_secret=&quot;your_client_secret&quot;,
-    cert_path=&quot;/path/to/certificate.pem&quot;,
-    key_path=&quot;/path/to/key.pem&quot;
+    cert_path=&quot;/path/to/certificate.pem&quot;,  # optional
+    key_path=&quot;/path/to/adp.key&quot;,           # optional
 )
-
-# Initialize the client
-client = AdpApiClient(credentials)
-
-# Call an ADP endpoint
-results = client.call_endpoint(
-    endpoint=&quot;/hr/v2/workers&quot;,
-    select=[&quot;workers/firstName&quot;, &quot;lastName&quot;, &quot;email&quot;],
-    masked=True
-)
+</code></pre>
+<h2 id="your-first-request">Your First Request</h2>
+<p>Use <code>AdpApiClient</code> as a context manager (recommended) so the underlying HTTP session is always closed cleanly:</p>
+<pre><code class="language-python">with AdpApiClient(credentials) as client:
+    results = client.call_endpoint(
+        endpoint=&quot;/hr/v2/workers&quot;,
+        select=[&quot;workers/person/legalName/givenName&quot;, &quot;workers/person/legalName/familyName1&quot;],
+        masked=True
+    )
 print(results)
 </code></pre>
-<h3 id="more-about-call_endpoint">More about <code>call_endpoint</code></h3>
-<p>The <code>call_endpoint</code> method is the primary way to interact with any registered ADP endpoint. You provide the endpoint path and optional parameters like <code>select</code> for specific fields and <code>filters</code> for querying results. Read more in the <a href="../reference/">API Reference</a></p>
+<p><code>call_endpoint</code> automatically handles pagination — it keeps fetching pages until the API signals there are no more results, then returns all records as a flat <code>List[Dict]</code>.</p>
+<h2 id="fetching-a-single-worker-by-id">Fetching a Single Worker by ID</h2>
+<p>When you already have a specific resource ID, use <code>call_rest_endpoint</code> instead:</p>
+<pre><code class="language-python">with AdpApiClient(credentials) as client:
+    results = client.call_rest_endpoint(
+        endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+        associateOID=&quot;G3349PRDL000001&quot;
+    )
+</code></pre>
+<p>You can also pass a list of IDs to fetch multiple workers in a batch:</p>
+<pre><code class="language-python">with AdpApiClient(credentials) as client:
+    results = client.call_rest_endpoint(
+        endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+        associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;, &quot;G3349PRDL000003&quot;]
+    )
+</code></pre>
+<h2 id="choosing-the-right-method">Choosing the Right Method</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List/search records with OData filters or pagination</td>
+<td><code>call_endpoint</code></td>
+</tr>
+<tr>
+<td>Fetch a specific resource by ID</td>
+<td><code>call_rest_endpoint</code></td>
+</tr>
+<tr>
+<td>Batch-fetch several known IDs</td>
+<td><code>call_rest_endpoint</code> with a list</td>
+</tr>
+</tbody>
+</table>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><strong><a href="../how-to-guides/">How-To Guides</a></strong> — filtering, logging, and other common tasks</li>
+<li><strong><a href="../reference/">API Reference</a></strong> — full parameter documentation</li>
+<li><strong><a href="../explanation/">Concepts</a></strong> — authentication flow, token lifecycle, and more</li>
+</ul>
 <h2 id="logging-configuration">Logging Configuration</h2>
 
 
@@ -540,8 +647,7 @@ print(results)
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src\adpapi\logger.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
-<span class="normal">10</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
@@ -553,7 +659,8 @@ print(results)
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_logging</span><span class="p">():</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_logging</span><span class="p">():</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;app.log&quot;</span><span class="p">,</span>
         <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>

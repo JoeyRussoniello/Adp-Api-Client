@@ -453,8 +453,9 @@
 <ul>
 <li>OAuth 2.0 client credentials authentication with certificate support</li>
 <li>Automatic token management and refresh</li>
-<li>Built-in retry logic and session management</li>
-<li>OData filter support for flexible queries</li>
+<li>Built-in retry logic with exponential backoff</li>
+<li>Paginated OData queries via <code>call_endpoint</code></li>
+<li>Direct REST calls with path parameter substitution via <code>call_rest_endpoint</code></li>
 <li>Comprehensive logging for debugging</li>
 </ul>
 <h2 id="use-case">Use Case</h2>
@@ -542,10 +543,10 @@ from adpapi.client import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
-endpoint = 'hr/v2/workers
+endpoint = '/hr/v2/workers'
 
 with AdpApiClient(credentials) as api:
-    results = api.call_endpoint(endpoint, select = ['workers/person/birthDate'], page_size = 1, max_requests = 1)
+    results = api.call_endpoint(endpoint, select=['workers/person/birthDate'], page_size=1, max_requests=1)
 
 print(results)
 </code></pre>
