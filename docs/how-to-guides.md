@@ -31,6 +31,36 @@ results = client.call_endpoint(
 )
 ```
 
+## Call a REST Endpoint with Path Parameters
+
+Use `call_rest_endpoint` to call non-OData REST endpoints that contain path parameters:
+
+```python
+# Single value — fetch one worker
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID="G3349PRDL000001"
+)
+
+# List of values — batch fetch multiple workers in one call
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID=["G3349PRDL000001", "G3349PRDL000002"]
+)
+```
+
+You can also pass query parameters and change the HTTP method:
+
+```python
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}/custom-fields",
+    method="GET",
+    masked=False,
+    params={"$top": 10},
+    associateOID="G3349PRDL000001"
+)
+```
+
 ## Configure Logging
 
 Set up application logging:

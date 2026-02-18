@@ -20,9 +20,14 @@ with AdpApiClient(credentials) as api:
     api.call_endpoint(...)
 ```
 
-The `AdpApiClient` surfaces one main entry point for all OData queries, `.call_endpoint()`
+The `AdpApiClient` surfaces two main entry points:
+
+- `.call_endpoint()` — for paginated OData queries
+- `.call_rest_endpoint()` — for direct REST API calls with path parameter substitution
 
 ::: adpapi.client.AdpApiClient.call_endpoint
+
+::: adpapi.client.AdpApiClient.call_rest_endpoint
 
 ## Filters
 
