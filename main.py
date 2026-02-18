@@ -75,6 +75,7 @@ def main() -> None:
         "workers/workerDates/originalHireDate",
         "workers/workAssignments/reportsTo",
         "workers/workAssignments/assignmentStatus",
+        "workers/workAssignments/positionID"
     ]
     endpoint = "/hr/v2/workers"
 
