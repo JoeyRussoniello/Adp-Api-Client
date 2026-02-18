@@ -18,6 +18,7 @@ from urllib3.util.retry import Retry
 
 from adpapi.odata_filters import FilterExpression
 from adpapi.sessions import ApiSession
+from adpapi.utils import substitute_path_parameters, validate_path_parameters
 
 logger = logging.getLogger(__name__)
 
@@ -291,6 +292,66 @@ class AdpApiClient:
                 logger.debug(f"Max Requests reached: {max_requests}")
                 break
             skip += page_size
+
+        return output
+
+    def call_rest_endpoint(
+        self,
+        endpoint: str,
+        method: Optional[str] = "GET",
+        masked: Optional[bool] = True,
+        timeout: Optional[int] = DEFAULT_TIMEOUT,
+        params: Optional[dict] = None,
+        **kwargs,
+    ) -> List[Dict]:
+        """Call a RestAPI Endpoint
+
+        Args:
+            endpoint (str): the endpoint path template (e.g. '/hr/workers/{workerId}')
+            method (Optional[str], optional): the HTTP method to use for the request. Defaults to 'GET'.
+            masked (Optional[bool], optional): whether to use masked headers. Defaults to True.
+            timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.
+            params (Optional[dict], optional): query parameters for the request. Defaults to None.
+            **kwargs: path parameters to substitute into the endpoint template (e.g workerId=['123', '456']) - can be single values or lists of values for batch requests
+        Raises:
+            ValueError: if required path parameters are missing or if endpoint format is incorrect
+
+        Returns:
+            List[Dict]: the collection of API responses for each substituted endpoint
+        """
+        is_valid, missing_params = validate_path_parameters(endpoint, kwargs)
+        if not is_valid:
+            raise ValueError(
+                f"Missing required path parameters: {', '.join(missing_params)}"
+            )
+
+        urls = substitute_path_parameters(endpoint, kwargs)
+        output = []
+
+        # Establish the call session
+        if masked:
+            get_headers_fn = self.get_masked_headers
+        else:
+            get_headers_fn = self.get_unmasked_headers
+
+        call_session = ApiSession(
+            self.session, self.cert, get_headers_fn, timeout=timeout
+        )
+        if params:
+            call_session.set_params(params)
+
+        for url in urls:
+            full_url = self.base_url + url
+            self._ensure_valid_token(timeout)
+            response = call_session._request(url=full_url, method=method)
+
+            try:
+                data = response.json()
+                output.append(data)
+
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON response: {e}")
+                raise
 
         return output
 
