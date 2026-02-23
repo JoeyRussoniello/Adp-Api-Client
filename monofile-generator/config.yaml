@@ -2,6 +2,7 @@
 # Specifies the order of modules in the generated notebook
 
 module_order:
+  - utils.py
   - logger.py
   - odata_filters.py
   - sessions.py
