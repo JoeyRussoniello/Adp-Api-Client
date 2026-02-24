@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
@@ -302,6 +303,7 @@ class AdpApiClient:
         masked: Optional[bool] = True,
         timeout: Optional[int] = DEFAULT_TIMEOUT,
         params: Optional[dict] = None,
+        max_workers: int = 1,
         **kwargs,
     ) -> List[Dict]:
         """Call a RestAPI Endpoint
@@ -312,6 +314,7 @@ class AdpApiClient:
             masked (Optional[bool], optional): whether to use masked headers. Defaults to True.
             timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.
             params (Optional[dict], optional): query parameters for the request. Defaults to None.
+            max_workers (int, optional): maximum number of threads for parallel requests. Defaults to 1 (sequential).
             **kwargs: path parameters to substitute into the endpoint template (e.g workerId=['123', '456']) - can be single values or lists of values for batch requests
         Raises:
             ValueError: if required path parameters are missing or if endpoint format is incorrect
@@ -326,7 +329,8 @@ class AdpApiClient:
             )
 
         urls = substitute_path_parameters(endpoint, kwargs)
-        output = []
+        if not urls:
+            return []
 
         # Establish the call session
         if masked:
@@ -340,27 +344,21 @@ class AdpApiClient:
         if params:
             call_session.set_params(params)
 
-        for url in urls:
-            full_url = self.base_url + url
-            self._ensure_valid_token(timeout)
-            response = call_session._request(url=full_url, method=method)
+        # Ensure a valid token once before all requests to avoid race conditions
+        # with concurrent threads each trying to refresh the token simultaneously.
+        self._ensure_valid_token(timeout)
 
+        def _fetch(url: str) -> Dict:
+            full_url = self.base_url + url
+            response = call_session._request(url=full_url, method=method)
             try:
                 data = response.json()
-                output.append(data)
-
+                return data
             except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse JSON response: {e}")
                 raise
 
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            output = list(executor.map(_fetch, urls))
+
         return output
-
-    def __enter__(self):
-        """Context manager entry."""
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit - cleanup session."""
-        self.session.close()
-        logger.debug("Session closed")
-        return False

@@ -95,8 +95,8 @@ class ApiSession:
             data = response.json()
             logger.error(
                 f"Request failed for {method} request to url: {url} with params {self.params}\n"
-                f"Response Headers: {json.dumps(headers, indent = 2)}\n"
-                f"Response Body: {json.dumps(data, indent = 2)}\n"
+                f"Response Headers: {json.dumps(headers, indent=2)}\n"
+                f"Response Body: {json.dumps(data, indent=2)}\n"
                 f"Error:\n{e}"
             )
             raise
