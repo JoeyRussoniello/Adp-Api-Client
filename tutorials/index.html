@@ -289,6 +289,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parallel-batch-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Batch Requests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#choosing-the-right-method" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -492,6 +503,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parallel-batch-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Batch Requests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#choosing-the-right-method" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -605,6 +627,19 @@ print(results)
         associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;, &quot;G3349PRDL000003&quot;]
     )
 </code></pre>
+<h2 id="parallel-batch-requests">Parallel Batch Requests</h2>
+<p>When fetching many resources by ID, use the <code>max_workers</code> parameter to issue requests in parallel. This can yield <strong>up to ~10x throughput improvement</strong> compared to sequential fetching:</p>
+<pre><code class="language-python">aoid_list = [&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;, &quot;G3349PRDL000003&quot;, ...]
+
+with AdpApiClient(credentials) as client:
+    # Fetch 50 workers across 10 threads ~10x faster than sequential
+    results = client.call_rest_endpoint(
+        endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+        max_workers=10,
+        associateOID=aoid_list
+    )
+</code></pre>
+<p>With <code>max_workers=1</code> (the default), requests are made sequentially. Increasing <code>max_workers</code> sends that many requests concurrently using a thread pool. A good starting value is <code>10</code>.</p>
 <h2 id="choosing-the-right-method">Choosing the Right Method</h2>
 <table>
 <thead>
@@ -625,6 +660,10 @@ print(results)
 <tr>
 <td>Batch-fetch several known IDs</td>
 <td><code>call_rest_endpoint</code> with a list</td>
+</tr>
+<tr>
+<td>Fast parallel batch fetch</td>
+<td><code>call_rest_endpoint</code> with a list + <code>max_workers</code></td>
 </tr>
 </tbody>
 </table>

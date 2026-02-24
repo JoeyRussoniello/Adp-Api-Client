@@ -305,6 +305,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#speed-up-batch-requests-with-parallel-fetching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speed Up Batch Requests with Parallel Fetching
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Speed Up Batch Requests with Parallel Fetching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-max_workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing max_workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -448,6 +476,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#speed-up-batch-requests-with-parallel-fetching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Speed Up Batch Requests with Parallel Fetching
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Speed Up Batch Requests with Parallel Fetching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-max_workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing max_workers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -555,6 +611,48 @@ results = client.call_rest_endpoint(
     associateOID=&quot;G3349PRDL000001&quot;
 )
 </code></pre>
+<h2 id="speed-up-batch-requests-with-parallel-fetching">Speed Up Batch Requests with Parallel Fetching</h2>
+<p>When calling <code>call_rest_endpoint</code> with a list of IDs, the default behaviour is sequential, one request at a time. For large batches this can be slow. Use the <code>max_workers</code> parameter to parallelize requests across multiple threads:</p>
+<pre><code class="language-python">aoid_list = get_aoids()  # e.g. a list of 50 associate OIDs
+
+with AdpApiClient(credentials) as client:
+    # Sequential (default) — ~44s for 50 workers
+    results_slow = client.call_rest_endpoint(
+        endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+        associateOID=aoid_list
+    )
+
+    # Parallel — ~8s for 50 workers with 10 threads (~5-10x faster)
+    results_fast = client.call_rest_endpoint(
+        endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+        max_workers=10,
+        associateOID=aoid_list
+    )
+</code></pre>
+<h3 id="choosing-max_workers">Choosing <code>max_workers</code></h3>
+<table>
+<thead>
+<tr>
+<th><code>max_workers</code></th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code> (default)</td>
+<td>Sequential — one request at a time</td>
+</tr>
+<tr>
+<td><code>5</code>–<code>10</code></td>
+<td>Good starting range for most workloads</td>
+</tr>
+<tr>
+<td><code>&gt; 10</code></td>
+<td>Diminishing returns; may trigger API rate limits</td>
+</tr>
+</tbody>
+</table>
+<p>The token is refreshed once before the batch starts, so all threads share the same valid token, there is no risk of concurrent token refresh conflicts.</p>
 <h2 id="configure-logging">Configure Logging</h2>
 <p>Enable logging to see token refresh events, pagination progress, and request errors:</p>
 <pre><code class="language-python">from adpapi.logger import configure_logging

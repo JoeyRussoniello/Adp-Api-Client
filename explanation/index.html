@@ -374,6 +374,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parallel-batch-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Batch Requests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parallel Batch Requests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why threads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Token safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#odata-filtering" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -623,6 +673,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#parallel-batch-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Batch Requests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parallel Batch Requests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why threads?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Token safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#odata-filtering" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -831,6 +931,36 @@ creds = AdpCredentials.from_env()
 <p>The client exposes two methods that serve different purposes:</p>
 <p><strong><code>call_endpoint</code></strong> — for paginated OData endpoints. Use this when you want to list or search records. It automatically handles <code>$top</code>/<code>$skip</code> pagination and supports <code>$select</code> and <code>$filter</code> query parameters.</p>
 <p><strong><code>call_rest_endpoint</code></strong> — for direct resource lookups. Use this when you already know the resource identifier and want to fetch it by ID. It supports path parameter templates (e.g. <code>/hr/v2/workers/{associateOID}</code>) and can batch-fetch a list of IDs in a single call.</p>
+<h2 id="parallel-batch-requests">Parallel Batch Requests</h2>
+<p><code>call_rest_endpoint</code> supports concurrent fetching through the <code>max_workers</code> parameter. Under the hood, this uses Python's <code>concurrent.futures.ThreadPoolExecutor</code> to dispatch multiple HTTP requests simultaneously.</p>
+<h3 id="why-threads">Why threads?</h3>
+<p>API calls are I/O-bound (most time is spent waiting for network responses), so Python's threading model works well here despite the GIL. Each thread simply waits for its own HTTP response, allowing many requests to be in-flight at once.</p>
+<h3 id="token-safety">Token safety</h3>
+<p>Before dispatching the thread pool, <code>call_rest_endpoint</code> calls <code>_ensure_valid_token()</code> once. This guarantees that all threads share the same fresh token and avoids race conditions from multiple threads trying to refresh simultaneously.</p>
+<h3 id="performance-characteristics">Performance characteristics</h3>
+<p>Benchmarks with real ADP API calls show:</p>
+<table>
+<thead>
+<tr>
+<th>Workers</th>
+<th>10 IDs</th>
+<th>50 IDs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (sequential)</td>
+<td>~11s</td>
+<td>~44s</td>
+</tr>
+<tr>
+<td>10 (parallel)</td>
+<td>~4s</td>
+<td>~8s</td>
+</tr>
+</tbody>
+</table>
+<p>Scaling beyond 10 workers typically offers diminishing returns because the bottleneck shifts to ADP server processing time and rate limits.</p>
 <h2 id="odata-filtering">OData Filtering</h2>
 <p>The ADP API uses OData query syntax for filtering results. The <code>FilterExpression</code> class provides a Pythonic way to build these filters:</p>
 
@@ -2350,8 +2480,8 @@ f.to_odata()
             <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Request failed for </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> request to url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> with params </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Response Headers: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Response Body: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Response Headers: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Response Body: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Error:</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span>
