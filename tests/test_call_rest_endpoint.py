@@ -12,13 +12,13 @@ Captures baseline behavior before thread-safe parallelism optimization:
 
 import json
 import time
-from unittest.mock import MagicMock, patch, call
+from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 import requests
 
 from adpapi.client import AdpApiClient, AdpCredentials
-
 
 # ============================================================================
 # FIXTURES
@@ -221,16 +221,16 @@ class TestQueryParams:
 
 
 class TestTokenRefresh:
-    """Token refresh before each request."""
+    """Token refresh before requests."""
 
-    def test_token_refreshed_before_each_request(self, client):
-        """_ensure_valid_token is called once per URL in the batch."""
+    def test_token_refreshed_once_before_batch(self, client):
+        """_ensure_valid_token is called exactly once before parallel execution."""
         with patch.object(client, "_ensure_valid_token") as mock_ensure, \
              patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
             client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}", workerId=["A", "B"]
             )
-        assert mock_ensure.call_count == 2
+        assert mock_ensure.call_count == 1
 
     def test_expired_token_triggers_refresh(self, client):
         """An expired token is refreshed before the request."""
@@ -341,3 +341,74 @@ class TestUrlConstruction:
         called_url = mock_req.call_args[1].get("url") or mock_req.call_args[0][0]
         assert "abc%20def" in called_url
         assert "abc def" not in called_url
+
+
+# ============================================================================
+# PARALLELISM / MAX_WORKERS TESTS
+# ============================================================================
+
+
+class TestMaxWorkers:
+    """max_workers parameter and parallel execution."""
+
+    def test_default_max_workers_is_one(self, client):
+        """With default max_workers=1, ThreadPoolExecutor uses 1 thread."""
+        with patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool, \
+             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+            client.call_rest_endpoint("/hr/v2/workers")
+        mock_pool.assert_called_once_with(max_workers=1)
+
+    def test_custom_max_workers_passed_to_executor(self, client):
+        """max_workers value is forwarded to ThreadPoolExecutor."""
+        with patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool, \
+             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+            client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=["A", "B", "C"],
+                max_workers=4,
+            )
+        mock_pool.assert_called_once_with(max_workers=4)
+
+    def test_parallel_results_preserve_order(self, client):
+        """Results stay ordered even with multiple workers."""
+        responses = [
+            _make_json_response({"id": "first"}),
+            _make_json_response({"id": "second"}),
+            _make_json_response({"id": "third"}),
+        ]
+        with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=["1", "2", "3"],
+                max_workers=3,
+            )
+        assert result[0]["id"] == "first"
+        assert result[1]["id"] == "second"
+        assert result[2]["id"] == "third"
+
+    def test_token_ensured_once_even_with_many_workers(self, client):
+        """Token is validated exactly once regardless of max_workers."""
+        with patch.object(client, "_ensure_valid_token") as mock_ensure, \
+             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+            client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=["A", "B", "C", "D"],
+                max_workers=4,
+            )
+        assert mock_ensure.call_count == 1
+
+    def test_error_in_parallel_propagates(self, client):
+        """An exception in one thread propagates to the caller."""
+        responses = [
+            _make_json_response({"id": "ok"}),
+            MagicMock(spec=requests.Response, status_code=200,
+                      json=MagicMock(side_effect=json.JSONDecodeError("bad", "", 0)),
+                      raise_for_status=MagicMock(return_value=None)),
+        ]
+        with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
+            with pytest.raises(json.JSONDecodeError):
+                client.call_rest_endpoint(
+                    "/hr/v2/workers/{workerId}",
+                    workerId=["A", "B"],
+                    max_workers=2,
+                )
