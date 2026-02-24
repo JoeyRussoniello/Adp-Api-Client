@@ -13,7 +13,7 @@ Captures baseline behavior before thread-safe parallelism optimization:
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
@@ -73,7 +73,10 @@ class TestSingleRequest:
     def test_single_path_param_returns_response(self, client):
         """GET with one path parameter returns parsed JSON in a list."""
         expected = {"workers": [{"id": "123"}]}
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response(expected)):
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ):
             result = client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}", workerId="123"
             )
@@ -82,14 +85,20 @@ class TestSingleRequest:
     def test_no_path_params(self, client):
         """Endpoint without placeholders works with no kwargs."""
         expected = {"status": "ok"}
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response(expected)):
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ):
             result = client.call_rest_endpoint("/hr/v2/workers")
         assert result == [expected]
 
     def test_multiple_path_params_single_values(self, client):
         """Multiple path parameters each with a single value."""
         expected = {"job": "data"}
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response(expected)) as mock_req:
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ) as mock_req:
             result = client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}/jobs/{jobId}",
                 workerId="W1",
@@ -127,7 +136,9 @@ class TestBatchRequests:
 
     def test_batch_urls_contain_each_id(self, client):
         """Each substituted URL contains its respective ID."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})) as mock_req:
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ) as mock_req:
             client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}", workerId=["X1", "X2"]
             )
@@ -147,14 +158,18 @@ class TestHttpMethods:
     @pytest.mark.parametrize("method", ["GET", "POST", "PUT", "DELETE"])
     def test_method_is_forwarded(self, client, method):
         """The specified HTTP method is passed to ApiSession._request."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})) as mock_req:
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ) as mock_req:
             client.call_rest_endpoint("/hr/v2/workers", method=method)
         mock_req.assert_called_once()
         assert mock_req.call_args[1].get("method") or mock_req.call_args[0][1] == method
 
     def test_default_method_is_get(self, client):
         """Default method is GET when not specified."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})) as mock_req:
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ) as mock_req:
             client.call_rest_endpoint("/hr/v2/workers")
         call_kwargs = mock_req.call_args
         # method positional or keyword should be GET
@@ -172,8 +187,13 @@ class TestMaskedHeaders:
 
     def test_masked_true_uses_masked_headers(self, client):
         """masked=True selects get_masked_headers."""
-        with patch.object(client, "get_masked_headers", wraps=client.get_masked_headers) as spy, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch.object(client, "get_masked_headers", wraps=client.get_masked_headers),
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint("/hr/v2/workers", masked=True)
         # The header function is passed to ApiSession, so spy may not be called here directly.
         # Instead, verify via the headers content.
@@ -185,7 +205,9 @@ class TestMaskedHeaders:
         headers = client.get_unmasked_headers()
         assert "masked=false" in headers["Accept"]
 
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ):
             # Should not raise
             client.call_rest_endpoint("/hr/v2/workers", masked=False)
 
@@ -200,8 +222,13 @@ class TestQueryParams:
 
     def test_params_forwarded_to_session(self, client):
         """Query params dict is set on the ApiSession."""
-        with patch("adpapi.sessions.ApiSession.set_params") as mock_set, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch("adpapi.sessions.ApiSession.set_params") as mock_set,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint(
                 "/hr/v2/workers", params={"$top": 10, "$select": "name"}
             )
@@ -209,8 +236,13 @@ class TestQueryParams:
 
     def test_no_params_skips_set_params(self, client):
         """When params is None, set_params is not called."""
-        with patch("adpapi.sessions.ApiSession.set_params") as mock_set, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch("adpapi.sessions.ApiSession.set_params") as mock_set,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint("/hr/v2/workers")
         mock_set.assert_not_called()
 
@@ -225,18 +257,26 @@ class TestTokenRefresh:
 
     def test_token_refreshed_once_before_batch(self, client):
         """_ensure_valid_token is called exactly once before parallel execution."""
-        with patch.object(client, "_ensure_valid_token") as mock_ensure, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
-            client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}", workerId=["A", "B"]
-            )
+        with (
+            patch.object(client, "_ensure_valid_token") as mock_ensure,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
+            client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId=["A", "B"])
         assert mock_ensure.call_count == 1
 
     def test_expired_token_triggers_refresh(self, client):
         """An expired token is refreshed before the request."""
         client.token_expires_at = time.time() - 100  # expired
-        with patch.object(client, "_get_token", return_value="refreshed") as mock_get, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch.object(client, "_get_token", return_value="refreshed") as mock_get,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint("/hr/v2/workers")
         mock_get.assert_called_once()
         assert client.token == "refreshed"
@@ -275,7 +315,10 @@ class TestErrorHandling:
 
     def test_http_error_propagates(self, client):
         """HTTP errors from ApiSession._request propagate."""
-        with patch("adpapi.sessions.ApiSession._request", side_effect=requests.HTTPError("500 Server Error")):
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            side_effect=requests.HTTPError("500 Server Error"),
+        ):
             with pytest.raises(requests.HTTPError):
                 client.call_rest_endpoint("/hr/v2/workers")
 
@@ -290,15 +333,16 @@ class TestReturnStructure:
 
     def test_returns_list(self, client):
         """Return type is always a list."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({"a": 1})):
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response({"a": 1}),
+        ):
             result = client.call_rest_endpoint("/hr/v2/workers")
         assert isinstance(result, list)
 
     def test_empty_endpoint_list_returns_empty(self, client):
         """An endpoint with an empty list param produces no requests and returns []."""
-        result = client.call_rest_endpoint(
-            "/hr/v2/workers/{workerId}", workerId=[]
-        )
+        result = client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId=[])
         assert result == []
 
     def test_response_order_matches_input_order(self, client):
@@ -327,17 +371,19 @@ class TestUrlConstruction:
 
     def test_url_includes_base_url(self, client):
         """Each request URL starts with the base_url."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})) as mock_req:
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ) as mock_req:
             client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId="123")
         called_url = mock_req.call_args[1].get("url") or mock_req.call_args[0][0]
         assert called_url.startswith(client.base_url)
 
     def test_path_params_are_url_encoded(self, client):
         """Special characters in path parameters are URL-encoded."""
-        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})) as mock_req:
-            client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}", workerId="abc def"
-            )
+        with patch(
+            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
+        ) as mock_req:
+            client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId="abc def")
         called_url = mock_req.call_args[1].get("url") or mock_req.call_args[0][0]
         assert "abc%20def" in called_url
         assert "abc def" not in called_url
@@ -353,15 +399,29 @@ class TestMaxWorkers:
 
     def test_default_max_workers_is_one(self, client):
         """With default max_workers=1, ThreadPoolExecutor uses 1 thread."""
-        with patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch(
+                "adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor
+            ) as mock_pool,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint("/hr/v2/workers")
         mock_pool.assert_called_once_with(max_workers=1)
 
     def test_custom_max_workers_passed_to_executor(self, client):
         """max_workers value is forwarded to ThreadPoolExecutor."""
-        with patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch(
+                "adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor
+            ) as mock_pool,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}",
                 workerId=["A", "B", "C"],
@@ -388,8 +448,13 @@ class TestMaxWorkers:
 
     def test_token_ensured_once_even_with_many_workers(self, client):
         """Token is validated exactly once regardless of max_workers."""
-        with patch.object(client, "_ensure_valid_token") as mock_ensure, \
-             patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
+        with (
+            patch.object(client, "_ensure_valid_token") as mock_ensure,
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                return_value=_make_json_response({}),
+            ),
+        ):
             client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}",
                 workerId=["A", "B", "C", "D"],
@@ -401,9 +466,12 @@ class TestMaxWorkers:
         """An exception in one thread propagates to the caller."""
         responses = [
             _make_json_response({"id": "ok"}),
-            MagicMock(spec=requests.Response, status_code=200,
-                      json=MagicMock(side_effect=json.JSONDecodeError("bad", "", 0)),
-                      raise_for_status=MagicMock(return_value=None)),
+            MagicMock(
+                spec=requests.Response,
+                status_code=200,
+                json=MagicMock(side_effect=json.JSONDecodeError("bad", "", 0)),
+                raise_for_status=MagicMock(return_value=None),
+            ),
         ]
         with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
             with pytest.raises(json.JSONDecodeError):
