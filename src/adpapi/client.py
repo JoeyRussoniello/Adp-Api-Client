@@ -362,3 +362,13 @@ class AdpApiClient:
             output = list(executor.map(_fetch, urls))
 
         return output
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - cleanup session."""
+        self.session.close()
+        logger.debug("Session closed")
+        return False
