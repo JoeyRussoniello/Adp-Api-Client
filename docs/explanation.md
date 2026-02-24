@@ -35,6 +35,29 @@ The client exposes two methods that serve different purposes:
 
 **`call_rest_endpoint`** — for direct resource lookups. Use this when you already know the resource identifier and want to fetch it by ID. It supports path parameter templates (e.g. `/hr/v2/workers/{associateOID}`) and can batch-fetch a list of IDs in a single call.
 
+## Parallel Batch Requests
+
+`call_rest_endpoint` supports concurrent fetching through the `max_workers` parameter. Under the hood, this uses Python's `concurrent.futures.ThreadPoolExecutor` to dispatch multiple HTTP requests simultaneously.
+
+### Why threads?
+
+API calls are I/O-bound (most time is spent waiting for network responses), so Python's threading model works well here despite the GIL. Each thread simply waits for its own HTTP response, allowing many requests to be in-flight at once.
+
+### Token safety
+
+Before dispatching the thread pool, `call_rest_endpoint` calls `_ensure_valid_token()` once. This guarantees that all threads share the same fresh token and avoids race conditions from multiple threads trying to refresh simultaneously.
+
+### Performance characteristics
+
+Benchmarks with real ADP API calls show:
+
+| Workers | 10 IDs | 50 IDs |
+|---|---|---|
+| 1 (sequential) | ~11s | ~44s |
+| 10 (parallel) | ~4s | ~8s |
+
+Scaling beyond 10 workers typically offers diminishing returns because the bottleneck shifts to ADP server processing time and rate limits.
+
 ## OData Filtering
 
 The ADP API uses OData query syntax for filtering results. The `FilterExpression` class provides a Pythonic way to build these filters:

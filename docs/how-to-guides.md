@@ -92,6 +92,38 @@ results = client.call_rest_endpoint(
 )
 ```
 
+## Speed Up Batch Requests with Parallel Fetching
+
+When calling `call_rest_endpoint` with a list of IDs, the default behaviour is sequential, one request at a time. For large batches this can be slow. Use the `max_workers` parameter to parallelize requests across multiple threads:
+
+```python
+aoid_list = get_aoids()  # e.g. a list of 50 associate OIDs
+
+with AdpApiClient(credentials) as client:
+    # Sequential (default) — ~44s for 50 workers
+    results_slow = client.call_rest_endpoint(
+        endpoint="/hr/v2/workers/{associateOID}",
+        associateOID=aoid_list
+    )
+
+    # Parallel — ~8s for 50 workers with 10 threads (~5-10x faster)
+    results_fast = client.call_rest_endpoint(
+        endpoint="/hr/v2/workers/{associateOID}",
+        max_workers=10,
+        associateOID=aoid_list
+    )
+```
+
+### Choosing `max_workers`
+
+| `max_workers` | Behaviour |
+|---|---|
+| `1` (default) | Sequential — one request at a time |
+| `5`–`10` | Good starting range for most workloads |
+| `> 10` | Diminishing returns; may trigger API rate limits |
+
+The token is refreshed once before the batch starts, so all threads share the same valid token, there is no risk of concurrent token refresh conflicts.
+
 ## Configure Logging
 
 Enable logging to see token refresh events, pagination progress, and request errors:

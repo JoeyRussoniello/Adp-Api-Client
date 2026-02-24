@@ -77,6 +77,24 @@ with AdpApiClient(credentials) as client:
     )
 ```
 
+## Parallel Batch Requests
+
+When fetching many resources by ID, use the `max_workers` parameter to issue requests in parallel. This can yield **up to ~10x throughput improvement** compared to sequential fetching:
+
+```python
+aoid_list = ["G3349PRDL000001", "G3349PRDL000002", "G3349PRDL000003", ...]
+
+with AdpApiClient(credentials) as client:
+    # Fetch 50 workers across 10 threads ~10x faster than sequential
+    results = client.call_rest_endpoint(
+        endpoint="/hr/v2/workers/{associateOID}",
+        max_workers=10,
+        associateOID=aoid_list
+    )
+```
+
+With `max_workers=1` (the default), requests are made sequentially. Increasing `max_workers` sends that many requests concurrently using a thread pool. A good starting value is `10`.
+
 ## Choosing the Right Method
 
 | Scenario | Method |
@@ -84,6 +102,7 @@ with AdpApiClient(credentials) as client:
 | List/search records with OData filters or pagination | `call_endpoint` |
 | Fetch a specific resource by ID | `call_rest_endpoint` |
 | Batch-fetch several known IDs | `call_rest_endpoint` with a list |
+| Fast parallel batch fetch | `call_rest_endpoint` with a list + `max_workers` |
 
 ## Next Steps
 

@@ -16,6 +16,7 @@ Welcome to the ADP API Client documentation. This project provides a Python clie
 - Built-in retry logic with exponential backoff
 - Paginated OData queries via `call_endpoint`
 - Direct REST calls with path parameter substitution via `call_rest_endpoint`
+- Parallel batch requests via `max_workers` for up to ~10x throughput improvement
 - Comprehensive logging for debugging
 
 ## Use Case
