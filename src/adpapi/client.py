@@ -61,7 +61,7 @@ class AdpCredentials:
         if client_id is None or client_secret is None:
             raise ValueError("CLIENT_ID and CLIENT_SECRET environment variables must be set")
 
-        return AdpCredentials(client_id, client_secret)
+        return AdpCredentials(client_id, client_secret, cert_path, key_path)
 
 
 class AdpApiClient:
