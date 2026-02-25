@@ -2,28 +2,72 @@
 """Generate a consolidated monofile notebook from src/adpapi modules."""
 
 import json
+import sys
 from pathlib import Path
-from typing import List, Set, Tuple
 
 import yaml
 
 
-def extract_imports(code: str) -> Tuple[List[str], str]:
-    """Extract imports from code and return (imports, code_without_imports)."""
+def extract_imports(code: str) -> tuple[list[str], str]:
+    """Extract imports from code and return (imports, code_without_imports).
+
+    Handles multi-line imports (parenthesized) and skips module docstrings
+    that appear before imports.
+    """
     lines = code.split("\n")
-    imports = []
-    code_lines = []
-    in_imports = True
+    imports: list[str] = []
+    code_lines: list[str] = []
+    in_preamble = True  # Before/during imports (docstrings, blanks, imports)
+    in_multiline_import = False
+    multiline_parts: list[str] = []
+    in_docstring = False
+    docstring_delim = ""
 
     for line in lines:
-        # Check if this is an import or from-import line
-        if line.strip().startswith("import ") or line.strip().startswith("from "):
-            imports.append(line)
-        elif in_imports and line.strip() == "":
-            # Empty line after imports, still part of import block
+        stripped = line.strip()
+
+        # Handle multi-line docstring skipping (module-level docstrings)
+        if in_docstring:
+            if docstring_delim in stripped:
+                in_docstring = False
             continue
+
+        # Handle continuation of a multi-line import
+        if in_multiline_import:
+            multiline_parts.append(line)
+            if ")" in stripped:
+                imports.append("\n".join(multiline_parts))
+                multiline_parts = []
+                in_multiline_import = False
+            continue
+
+        # While still in the preamble (before real code)
+        if in_preamble:
+            if stripped.startswith("import ") or stripped.startswith("from "):
+                # Start of an import — could be multi-line
+                if "(" in stripped and ")" not in stripped:
+                    in_multiline_import = True
+                    multiline_parts = [line]
+                else:
+                    imports.append(line)
+            elif stripped == "" or stripped.startswith("#"):
+                # Blank lines and comments in preamble — skip
+                continue
+            elif stripped.startswith('"""') or stripped.startswith("'''"):
+                delim = stripped[:3]
+                # Check if docstring opens and closes on same line
+                if stripped.count(delim) >= 2:
+                    # Single-line docstring — skip it
+                    continue
+                else:
+                    # Multi-line docstring — skip until closing delimiter
+                    in_docstring = True
+                    docstring_delim = delim
+                    continue
+            else:
+                in_preamble = False
+                code_lines.append(line)
         else:
-            in_imports = False
             code_lines.append(line)
 
     # Join the remaining code, removing leading empty lines
@@ -32,7 +76,7 @@ def extract_imports(code: str) -> Tuple[List[str], str]:
     return imports, remaining_code
 
 
-def remove_package_imports(imports: List[str]) -> List[str]:
+def remove_package_imports(imports: list[str]) -> list[str]:
     """Remove imports starting with 'adpapi.'"""
     filtered = []
     for imp in imports:
@@ -41,9 +85,9 @@ def remove_package_imports(imports: List[str]) -> List[str]:
     return filtered
 
 
-def consolidate_imports(imports: List[str]) -> List[str]:
+def consolidate_imports(imports: list[str]) -> list[str]:
     """Remove duplicate imports while preserving order."""
-    seen: Set[str] = set()
+    seen: set[str] = set()
     consolidated = []
     for imp in imports:
         if imp.strip() not in seen:
@@ -57,12 +101,12 @@ def load_config(config_file: Path) -> dict:
     if not config_file.exists():
         raise FileNotFoundError(f"Config file not found: {config_file}")
 
-    with open(config_file, "r") as f:
+    with open(config_file) as f:
         config = yaml.safe_load(f)
     return config
 
 
-def read_python_files(src_dir: Path, module_order: List[str]) -> dict:
+def read_python_files(src_dir: Path, module_order: list[str]) -> dict:
     """Read all Python files from src/adpapi directory in specified order."""
     files = {}
 
@@ -70,13 +114,19 @@ def read_python_files(src_dir: Path, module_order: List[str]) -> dict:
     for module in module_order:
         py_file = src_dir / module
         if py_file.exists():
-            with open(py_file, "r") as f:
+            with open(py_file) as f:
                 files[module] = f.read()
 
     return files
 
 
-def generate_notebook(all_imports: List[str], files: dict) -> dict:
+def _split_source(code: str) -> list[str]:
+    """Split code into notebook source lines with trailing newlines (except the last)."""
+    lines = code.split("\n")
+    return [line + "\n" for line in lines[:-1]] + [lines[-1]]
+
+
+def generate_notebook(all_imports: list[str], files: dict) -> dict:
     """Generate notebook structure with consolidated imports and file contents."""
     cells = []
 
@@ -89,7 +139,7 @@ def generate_notebook(all_imports: List[str], files: dict) -> dict:
                 "execution_count": None,
                 "metadata": {},
                 "outputs": [],
-                "source": import_code.split("\n"),
+                "source": _split_source(import_code),
             }
         )
 
@@ -110,7 +160,7 @@ def generate_notebook(all_imports: List[str], files: dict) -> dict:
                     "execution_count": None,
                     "metadata": {},
                     "outputs": [],
-                    "source": file_code.strip().split("\n"),
+                    "source": _split_source(file_code.strip()),
                 }
             )
 
@@ -131,6 +181,32 @@ def generate_notebook(all_imports: List[str], files: dict) -> dict:
 
     return notebook
 
+def lint_notebook(notebook_file: Path):
+    """Lint the generated notebook using ruff."""
+    import subprocess
+
+    print(f"Linting notebook: {notebook_file}")
+    try:
+        subprocess.run(
+            ['ruff', 'format', str(notebook_file.absolute())],
+            capture_output=True,
+            text = True,
+            check = True,
+        )
+        print('Formatted notebook successfully.')
+        subprocess.run(
+            ["ruff", "check", '--fix', '--unsafe-fixes', str(notebook_file.absolute())],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        print("Linting passed with no issues.")
+    except subprocess.CalledProcessError as e:
+        print("Linting issues found:")
+        print(f'Command: {e.cmd}')
+        print(e.stdout)
+        print(e.stderr)
+        sys.exit(1)
 
 def main():
     """Main function to generate monofile."""
@@ -161,7 +237,7 @@ def main():
 
     # Collect all imports
     all_imports = []
-    for filename, content in files.items():
+    for _, content in files.items():
         file_imports, _ = extract_imports(content)
         all_imports.extend(file_imports)
 
@@ -179,7 +255,7 @@ def main():
         json.dump(notebook, f, indent=1)
 
     print(f"Generated monofile: {output_file}")
-
+    lint_notebook(output_file)
 
 if __name__ == "__main__":
     main()
