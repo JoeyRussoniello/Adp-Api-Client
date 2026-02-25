@@ -1,6 +1,7 @@
 name: Docs
 on:
   pull_request:
+    branches: [main]
     paths: ['docs/**', 'mkdocs.yml', 'src/**', '.github/workflows/docs.yml']
   push:
     branches: [ main ]    
