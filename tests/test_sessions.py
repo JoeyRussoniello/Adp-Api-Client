@@ -47,9 +47,7 @@ class TestApiSessionInitialization:
         """Test ApiSession initializes with default values."""
         assert api_session.session == mock_session
         assert api_session.cert == cert
-        assert (
-            api_session.get_headers() == {}
-        )  # get_headers callable returns empty dict
+        assert api_session.get_headers() == {}  # get_headers callable returns empty dict
         assert api_session.params == {}
         assert api_session.timeout == 30
         assert api_session.data is None
@@ -144,9 +142,7 @@ class TestRequest:
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
 
-        response = api_session_with_headers._request(
-            "http://example.com", RequestMethod.GET
-        )
+        response = api_session_with_headers._request("http://example.com", RequestMethod.GET)
 
         assert response == mock_response
         mock_session.get.assert_called_once()
@@ -158,9 +154,7 @@ class TestRequest:
         mock_session.post.return_value = mock_response
 
         api_session_with_headers.data = {"key": "value"}
-        response = api_session_with_headers._request(
-            "http://example.com", RequestMethod.POST
-        )
+        response = api_session_with_headers._request("http://example.com", RequestMethod.POST)
 
         assert response == mock_response
         # Verify json kwarg was passed

@@ -128,9 +128,7 @@ class TestComparisonOperators:
         """All comparison operators should generate valid OData syntax."""
         field = Field("Age")
         expr = getattr(field, method)(value)
-        expected = (
-            f"(Age {op} '{value}')" if isinstance(value, str) else f"(Age {op} {value})"
-        )
+        expected = f"(Age {op} '{value}')" if isinstance(value, str) else f"(Age {op} {value})"
         assert expr.to_odata() == expected
 
     def test_equality_comparison(self):
@@ -239,11 +237,7 @@ class TestLogicalOperators:
 
     def test_chained_and_operators(self):
         """Multiple AND operators should chain correctly."""
-        expr = (
-            Field("Status").eq("Active")
-            & Field("Age").ge(18)
-            & Field("Verified").eq(True)
-        )
+        expr = Field("Status").eq("Active") & Field("Age").ge(18) & Field("Verified").eq(True)
         result = expr.to_odata()
         # Verify all conditions are present
         assert "Status eq 'Active'" in result
@@ -262,9 +256,7 @@ class TestLogicalOperators:
 
     def test_mixed_and_or_operators(self):
         """AND and OR should work together, with precedence handled by parentheses."""
-        expr = (Field("Status").eq("Active") & Field("Age").ge(18)) | Field(
-            "Status"
-        ).eq("Verified")
+        expr = (Field("Status").eq("Active") & Field("Age").ge(18)) | Field("Status").eq("Verified")
         result = expr.to_odata()
         assert "Status eq 'Active'" in result
         assert "Age ge 18" in result
@@ -360,9 +352,7 @@ class TestComplexExpressions:
 
     def test_expression_with_string_and_comparison_functions(self):
         """Mix string functions with comparisons."""
-        expr = Field("Name").contains("John") & (
-            Field("Age").ge(18) & Field("Age").le(65)
-        )
+        expr = Field("Name").contains("John") & (Field("Age").ge(18) & Field("Age").le(65))
         result = expr.to_odata()
         assert "contains(Name, 'John')" in result
         assert "Age ge 18" in result

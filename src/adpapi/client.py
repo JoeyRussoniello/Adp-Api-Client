@@ -11,7 +11,7 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -36,8 +36,8 @@ KEY_DEFAULT = "adp.key"
 class AdpCredentials:
     client_id: str
     client_secret: str
-    cert_path: Optional[str] = CERT_DEFAULT
-    key_path: Optional[str] = KEY_DEFAULT
+    cert_path: str | None = CERT_DEFAULT
+    key_path: str | None = KEY_DEFAULT
 
     @staticmethod
     def from_env() -> "AdpCredentials":
@@ -59,9 +59,7 @@ class AdpCredentials:
             )
 
         if client_id is None or client_secret is None:
-            raise ValueError(
-                "CLIENT_ID and CLIENT_SECRET environment variables must be set"
-            )
+            raise ValueError("CLIENT_ID and CLIENT_SECRET environment variables must be set")
 
         return AdpCredentials(client_id, client_secret)
 
@@ -70,9 +68,7 @@ class AdpApiClient:
     def __init__(self, credentials: AdpCredentials):
         if credentials.cert_path is None or credentials.key_path is None:
             raise ValueError("Certificate path and key path must not be None")
-        if not os.path.exists(credentials.cert_path) or not os.path.exists(
-            credentials.key_path
-        ):
+        if not os.path.exists(credentials.cert_path) or not os.path.exists(credentials.key_path):
             logger.error("Missing Certificate or Key File.")
             raise FileNotFoundError("Certificate or key file not found.")
 
@@ -85,11 +81,11 @@ class AdpApiClient:
         self._setup_retry_strategy()
 
         # Token expiration tracking
-        self.token: Optional[str] = None
+        self.token: str | None = None
         self.token_expires_at = 0
 
     @property
-    def payload(self) -> Dict[str, str]:
+    def payload(self) -> dict[str, str]:
         return {
             "grant_type": "client_credentials",
             "client_id": self.client_id,
@@ -111,9 +107,7 @@ class AdpApiClient:
         adapter = HTTPAdapter(max_retries=retry_strategy)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
-        logger.debug(
-            f"Retry strategy configured: {retries} retries with {backoff_factor}s backoff"
-        )
+        logger.debug(f"Retry strategy configured: {retries} retries with {backoff_factor}s backoff")
 
     def _is_token_expired(self) -> bool:
         """Check if token is expired or will expire soon."""
@@ -150,7 +144,7 @@ class AdpApiClient:
             logger.debug("Token expired, refreshing...")
             self.token = self._get_token(timeout)
 
-    def _get_headers(self, masked: bool = True) -> Dict[str, str]:
+    def _get_headers(self, masked: bool = True) -> dict[str, str]:
         """Build request headers with Bearer token and masking preference."""
         # * May need to be tweaked in the future if OData calls or other forms are needed. Not necessary for MVP
         accept = "application/json"
@@ -165,15 +159,13 @@ class AdpApiClient:
 
         return headers
 
-    def get_masked_headers(self) -> Dict[str, str]:
+    def get_masked_headers(self) -> dict[str, str]:
         return self._get_headers(True)
 
-    def get_unmasked_headers(self) -> Dict[str, str]:
+    def get_unmasked_headers(self) -> dict[str, str]:
         return self._get_headers(False)
 
-    def _handle_filters(
-        self, filters: Optional[Union[str, FilterExpression]] = None
-    ) -> str:
+    def _handle_filters(self, filters: str | FilterExpression | None = None) -> str:
         """Convert filter input (string or FilterExpression) to OData string.
 
         Args:
@@ -217,13 +209,13 @@ class AdpApiClient:
     def call_endpoint(
         self,
         endpoint: str,
-        select: Optional[List[str]] = None,
-        filters: Optional[Union[str, FilterExpression]] = None,
+        select: list[str] | None = None,
+        filters: str | FilterExpression | None = None,
         masked: bool = True,
         timeout: int = DEFAULT_TIMEOUT,
         page_size: int = 100,
-        max_requests: Optional[int] = None,
-    ) -> List[Dict]:
+        max_requests: int | None = None,
+    ) -> list[dict]:
         """Call any Registered ADP Endpoint
 
         Args:
@@ -245,9 +237,7 @@ class AdpApiClient:
 
         # Request Cleanup and Validation Logic
         if page_size > 100:
-            logger.warning(
-                "Page size > 100 not supported by API endpoint. Limiting to 100."
-            )
+            logger.warning("Page size > 100 not supported by API endpoint. Limiting to 100.")
             page_size = 100
 
         # Output/Request Initialization
@@ -261,16 +251,11 @@ class AdpApiClient:
         output = []
         skip = 0
 
-        if masked:
-            get_headers_fn = self.get_masked_headers
-        else:
-            get_headers_fn = self.get_unmasked_headers
+        get_headers_fn = self.get_masked_headers if masked else self.get_unmasked_headers
 
-        call_session = ApiSession(
-            self.session, self.cert, get_headers_fn, timeout=timeout
-        )
+        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
 
-        params: Dict[str, Any] = {"$top": page_size}
+        params: dict[str, Any] = {"$top": page_size}
         if select_param:
             logging.debug(f"Restricting OData Selection to {select_param}")
             params["$select"] = select_param
@@ -309,10 +294,10 @@ class AdpApiClient:
         method: str = "GET",
         masked: bool = True,
         timeout: int = DEFAULT_TIMEOUT,
-        params: Optional[dict] = None,
+        params: dict | None = None,
         max_workers: int = 1,
         **kwargs,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Call a RestAPI Endpoint
 
         Args:
@@ -331,23 +316,16 @@ class AdpApiClient:
         """
         is_valid, missing_params = validate_path_parameters(endpoint, kwargs)
         if not is_valid:
-            raise ValueError(
-                f"Missing required path parameters: {', '.join(missing_params)}"
-            )
+            raise ValueError(f"Missing required path parameters: {', '.join(missing_params)}")
 
         urls = substitute_path_parameters(endpoint, kwargs)
         if not urls:
             return []
 
         # Establish the call session
-        if masked:
-            get_headers_fn = self.get_masked_headers
-        else:
-            get_headers_fn = self.get_unmasked_headers
+        get_headers_fn = self.get_masked_headers if masked else self.get_unmasked_headers
 
-        call_session = ApiSession(
-            self.session, self.cert, get_headers_fn, timeout=timeout
-        )
+        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
         if params:
             call_session.set_params(params)
 
@@ -355,7 +333,7 @@ class AdpApiClient:
         # with concurrent threads each trying to refresh the token simultaneously.
         self._ensure_valid_token(timeout)
 
-        def _fetch(url: str) -> Dict:
+        def _fetch(url: str) -> dict:
             full_url = self.base_url + url
             response = call_session._request(url=full_url, method=RequestMethod(method))
             try:

@@ -1,9 +1,9 @@
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any
 from urllib.parse import quote
 
 
-def extract_path_parameters(path: str) -> List[str]:
+def extract_path_parameters(path: str) -> list[str]:
     """
     Extract path parameter names from a URL path template.
 
@@ -21,9 +21,7 @@ def extract_path_parameters(path: str) -> List[str]:
     return re.findall(pattern, path)
 
 
-def validate_path_parameters(
-    path: str, parameters: Dict[str, Any]
-) -> Tuple[bool, List[str]]:
+def validate_path_parameters(path: str, parameters: dict[str, Any]) -> tuple[bool, list[str]]:
     """
     Validate that all required path parameters are provided.
 
@@ -39,7 +37,7 @@ def validate_path_parameters(
     return (len(missing_params) == 0, missing_params)
 
 
-def substitute_path_parameters(path: str, params: Dict[str, Any]) -> List[str]:
+def substitute_path_parameters(path: str, params: dict[str, Any]) -> list[str]:
     """
     Substitute path parameters with actual values.
     Handles both single values and lists of values.
@@ -82,7 +80,7 @@ def substitute_path_parameters(path: str, params: Dict[str, Any]) -> List[str]:
     return result_paths
 
 
-def _substitute_single_path(path: str, params: Dict[str, Any]) -> str:
+def _substitute_single_path(path: str, params: dict[str, Any]) -> str:
     """
     Substitute a single set of parameters into a path template.
 
@@ -134,8 +132,4 @@ def is_valid_endpoint_path(path: str) -> bool:
     pattern = r"\{[a-zA-Z_][a-zA-Z0-9_]*\}"
     placeholders = re.findall(r"\{[^}]*\}", path)
 
-    for placeholder in placeholders:
-        if not re.match(pattern, placeholder):
-            return False
-
-    return True
+    return all(re.match(pattern, placeholder) for placeholder in placeholders)

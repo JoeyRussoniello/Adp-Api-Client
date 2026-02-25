@@ -39,9 +39,7 @@ class TestLoggingConfiguration:
 
         configure_logging()
 
-        file_handlers = [
-            h for h in clean_logger.handlers if isinstance(h, logging.FileHandler)
-        ]
+        file_handlers = [h for h in clean_logger.handlers if isinstance(h, logging.FileHandler)]
         assert len(file_handlers) > 0
 
     @patch("builtins.open", create=True)

@@ -62,9 +62,7 @@ def client_with_mocked_token(adp_credentials, mock_file_system):
 class TestInitialization:
     """Test AdpApiClient initialization and validation."""
 
-    def test_initialization_with_valid_credentials(
-        self, adp_credentials, mock_file_system
-    ):
+    def test_initialization_with_valid_credentials(self, adp_credentials, mock_file_system):
         """UNIT: Client initializes with valid credentials and file paths."""
         client = AdpApiClient(adp_credentials)
 
@@ -81,9 +79,7 @@ class TestInitialization:
         assert client.token is None
         assert client.token_expires_at == 0
 
-    def test_initialization_allows_blank_client_id(
-        self, adp_credentials, mock_file_system
-    ):
+    def test_initialization_allows_blank_client_id(self, adp_credentials, mock_file_system):
         """
         UNIT: Client does not fail-fast on empty client_id.
         (Validation, if desired, must occur elsewhere: AdpCredentials or _get_token.)
@@ -98,9 +94,7 @@ class TestInitialization:
         client = AdpApiClient(bad)  # should NOT raise
         assert client is not None
 
-    def test_initialization_allows_blank_client_secret(
-        self, adp_credentials, mock_file_system
-    ):
+    def test_initialization_allows_blank_client_secret(self, adp_credentials, mock_file_system):
         """UNIT: Client does not fail-fast on empty client_secret."""
         bad = AdpCredentials(
             client_id=adp_credentials.client_id,
@@ -171,9 +165,7 @@ class TestTokenManagement:
         assert client.token_expires_at > time.time()
 
     @patch("requests.Session.post")
-    def test_get_token_missing_in_response(
-        self, mock_post, adp_credentials, mock_file_system
-    ):
+    def test_get_token_missing_in_response(self, mock_post, adp_credentials, mock_file_system):
         """UNIT: Token acquisition fails when access_token not in response."""
         mock_response = MagicMock()
         mock_response.json.return_value = {}  # Missing access_token
@@ -185,9 +177,7 @@ class TestTokenManagement:
             client._get_token()
 
     @patch("requests.Session.post")
-    def test_get_token_request_exception(
-        self, mock_post, adp_credentials, mock_file_system
-    ):
+    def test_get_token_request_exception(self, mock_post, adp_credentials, mock_file_system):
         """UNIT: Token acquisition fails on request exception."""
         mock_post.side_effect = requests.RequestException("Connection failed")
 

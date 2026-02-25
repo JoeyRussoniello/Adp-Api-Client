@@ -7,9 +7,10 @@ specifying HTTP request types.
 
 import json
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Callable, Optional
+from typing import Any
 
 import requests
 
@@ -27,11 +28,11 @@ class RequestMethod(StrEnum):
 class ApiSession:
     session: requests.Session
     cert: tuple[str, str]
-    get_headers: Optional[Callable[[], dict]] = None
-    headers: Optional[dict] = None
-    params: Optional[dict] = None
+    get_headers: Callable[[], dict] | None = None
+    headers: dict | None = None
+    params: dict | None = None
     timeout: int = 30
-    data: Optional[Any] = None
+    data: Any | None = None
 
     def __post_init__(self):
         if self.get_headers is None:
@@ -59,9 +60,7 @@ class ApiSession:
 
         raise ValueError(f"Unsupported method {method}")
 
-    def _request(
-        self, url: str, method: RequestMethod = RequestMethod.GET
-    ) -> requests.Response:
+    def _request(self, url: str, method: RequestMethod = RequestMethod.GET) -> requests.Response:
         """Execute HTTP request with specified method, headers, params, and optional data.
 
         Args:
@@ -107,12 +106,12 @@ class ApiSession:
     def get(self, url: str) -> requests.Response:
         return self._request(url, RequestMethod.GET)
 
-    def post(self, url: str, data: Optional[Any] = None) -> requests.Response:
+    def post(self, url: str, data: Any | None = None) -> requests.Response:
         if data is not None:
             self.set_data(data)
         return self._request(url, RequestMethod.POST)
 
-    def put(self, url: str, data: Optional[Any] = None) -> requests.Response:
+    def put(self, url: str, data: Any | None = None) -> requests.Response:
         if data is not None:
             self.set_data(data)
         return self._request(url, RequestMethod.PUT)

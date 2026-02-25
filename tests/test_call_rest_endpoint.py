@@ -77,9 +77,7 @@ class TestSingleRequest:
             "adpapi.sessions.ApiSession._request",
             return_value=_make_json_response(expected),
         ):
-            result = client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}", workerId="123"
-            )
+            result = client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId="123")
         assert result == [expected]
 
     def test_no_path_params(self, client):
@@ -139,9 +137,7 @@ class TestBatchRequests:
         with patch(
             "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
         ) as mock_req:
-            client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}", workerId=["X1", "X2"]
-            )
+            client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId=["X1", "X2"])
         urls = [c.kwargs.get("url") or c.args[0] for c in mock_req.call_args_list]
         assert any("X1" in u for u in urls)
         assert any("X2" in u for u in urls)
@@ -205,9 +201,7 @@ class TestMaskedHeaders:
         headers = client.get_unmasked_headers()
         assert "masked=false" in headers["Accept"]
 
-        with patch(
-            "adpapi.sessions.ApiSession._request", return_value=_make_json_response({})
-        ):
+        with patch("adpapi.sessions.ApiSession._request", return_value=_make_json_response({})):
             # Should not raise
             client.call_rest_endpoint("/hr/v2/workers", masked=False)
 
@@ -229,9 +223,7 @@ class TestQueryParams:
                 return_value=_make_json_response({}),
             ),
         ):
-            client.call_rest_endpoint(
-                "/hr/v2/workers", params={"$top": 10, "$select": "name"}
-            )
+            client.call_rest_endpoint("/hr/v2/workers", params={"$top": 10, "$select": "name"})
         mock_set.assert_called_once_with({"$top": 10, "$select": "name"})
 
     def test_no_params_skips_set_params(self, client):
@@ -298,9 +290,7 @@ class TestErrorHandling:
     def test_missing_one_of_multiple_params_raises(self, client):
         """Missing one of several required path parameters raises ValueError."""
         with pytest.raises(ValueError, match="Missing required path parameters"):
-            client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}/jobs/{jobId}", workerId="W1"
-            )
+            client.call_rest_endpoint("/hr/v2/workers/{workerId}/jobs/{jobId}", workerId="W1")
 
     def test_json_decode_error_is_raised(self, client):
         """Non-JSON response body raises json.JSONDecodeError."""
@@ -309,18 +299,22 @@ class TestErrorHandling:
         bad_response.json.side_effect = json.JSONDecodeError("Expecting value", "", 0)
         bad_response.raise_for_status.return_value = None
 
-        with patch("adpapi.sessions.ApiSession._request", return_value=bad_response):
-            with pytest.raises(json.JSONDecodeError):
-                client.call_rest_endpoint("/hr/v2/workers")
+        with (
+            patch("adpapi.sessions.ApiSession._request", return_value=bad_response),
+            pytest.raises(json.JSONDecodeError),
+        ):
+            client.call_rest_endpoint("/hr/v2/workers")
 
     def test_http_error_propagates(self, client):
         """HTTP errors from ApiSession._request propagate."""
-        with patch(
-            "adpapi.sessions.ApiSession._request",
-            side_effect=requests.HTTPError("500 Server Error"),
+        with (
+            patch(
+                "adpapi.sessions.ApiSession._request",
+                side_effect=requests.HTTPError("500 Server Error"),
+            ),
+            pytest.raises(requests.HTTPError),
         ):
-            with pytest.raises(requests.HTTPError):
-                client.call_rest_endpoint("/hr/v2/workers")
+            client.call_rest_endpoint("/hr/v2/workers")
 
 
 # ============================================================================
@@ -400,9 +394,7 @@ class TestMaxWorkers:
     def test_default_max_workers_is_one(self, client):
         """With default max_workers=1, ThreadPoolExecutor uses 1 thread."""
         with (
-            patch(
-                "adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor
-            ) as mock_pool,
+            patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool,
             patch(
                 "adpapi.sessions.ApiSession._request",
                 return_value=_make_json_response({}),
@@ -414,9 +406,7 @@ class TestMaxWorkers:
     def test_custom_max_workers_passed_to_executor(self, client):
         """max_workers value is forwarded to ThreadPoolExecutor."""
         with (
-            patch(
-                "adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor
-            ) as mock_pool,
+            patch("adpapi.client.ThreadPoolExecutor", wraps=ThreadPoolExecutor) as mock_pool,
             patch(
                 "adpapi.sessions.ApiSession._request",
                 return_value=_make_json_response({}),
@@ -447,9 +437,7 @@ class TestMaxWorkers:
                     return _make_json_response(data)
             raise ValueError(f"Unexpected URL: {url}")
 
-        with patch(
-            "adpapi.sessions.ApiSession._request", side_effect=_url_based_response
-        ):
+        with patch("adpapi.sessions.ApiSession._request", side_effect=_url_based_response):
             result = client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}",
                 workerId=["1", "2", "3"],
@@ -486,10 +474,12 @@ class TestMaxWorkers:
                 raise_for_status=MagicMock(return_value=None),
             ),
         ]
-        with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
-            with pytest.raises(json.JSONDecodeError):
-                client.call_rest_endpoint(
-                    "/hr/v2/workers/{workerId}",
-                    workerId=["A", "B"],
-                    max_workers=2,
-                )
+        with (
+            patch("adpapi.sessions.ApiSession._request", side_effect=responses),
+            pytest.raises(json.JSONDecodeError),
+        ):
+            client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=["A", "B"],
+                max_workers=2,
+            )

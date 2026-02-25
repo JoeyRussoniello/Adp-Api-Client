@@ -21,7 +21,7 @@ Example:
 
 import re
 from dataclasses import dataclass
-from typing import Any, List, Optional, Union
+from typing import Any
 
 
 # AST NODE TYPES
@@ -249,7 +249,7 @@ class Field(Expr):
         return Func("endswith", [self, literal(val)])
 
     # emulate IN as disjunction
-    def isin(self, values: List[Any]) -> "Expr":
+    def isin(self, values: list[Any]) -> "Expr":
         """Create an IN filter for multiple values (field IN (val1, val2, ...)).
 
         Since OData v4 doesn't have a native IN operator, this is implemented as
@@ -386,7 +386,7 @@ class Func(Expr):
     """
 
     name: str
-    args: List[Expr]
+    args: list[Expr]
 
     def to_odata(self) -> str:
         """Convert this function call to an OData string representation.
@@ -647,7 +647,7 @@ class FilterExpression(Expr):
         return FilterExpression(UnaryOp("not", self._node))
 
 
-def _unwrap(e: Union[Expr, FilterExpression]) -> Expr:
+def _unwrap(e: Expr | FilterExpression) -> Expr:
     """Extract the internal AST node from a FilterExpression if needed.
 
     Helper function to unwrap FilterExpression instances for combining with
@@ -692,9 +692,7 @@ _TOKEN_SPEC = [
 ]
 
 """Compiled regex for tokenizing OData filter strings."""
-_TOKEN_RE = re.compile(
-    "|".join(f"(?P<{name}>{pat})" for name, pat in _TOKEN_SPEC), re.IGNORECASE
-)
+_TOKEN_RE = re.compile("|".join(f"(?P<{name}>{pat})" for name, pat in _TOKEN_SPEC), re.IGNORECASE)
 
 
 class _Token:
@@ -738,7 +736,7 @@ class _FilterParser:
         Args:
             text: The OData filter string to parse.
         """
-        self.tokens = [t for t in self._tokenize(text)]
+        self.tokens = list(self._tokenize(text))
         self.pos = 0
 
     def _tokenize(self, text):
@@ -758,7 +756,7 @@ class _FilterParser:
             yield _Token(typ, val)
         # implicit EOF
 
-    def _peek(self) -> Optional[_Token]:
+    def _peek(self) -> _Token | None:
         """Look at the current token without consuming it.
 
         Returns:
@@ -784,7 +782,7 @@ class _FilterParser:
         self.pos += 1
         return tok
 
-    def _match(self, typ: str) -> Optional[_Token]:
+    def _match(self, typ: str) -> _Token | None:
         """Optionally consume the next token if it matches a type.
 
         Args:
@@ -830,11 +828,7 @@ class _FilterParser:
             Expr: The parsed OR expression.
         """
         node = self._parse_and()
-        while (
-            (tok := self._peek()) is not None
-            and tok.type == "OP"
-            and tok.value.lower() == "or"
-        ):
+        while (tok := self._peek()) is not None and tok.type == "OP" and tok.value.lower() == "or":
             self._eat("OP")
             rhs = self._parse_and()
             node = BinaryOp(node, "or", rhs)
@@ -847,11 +841,7 @@ class _FilterParser:
             Expr: The parsed AND expression.
         """
         node = self._parse_not()
-        while (
-            (tok := self._peek()) is not None
-            and tok.type == "OP"
-            and tok.value.lower() == "and"
-        ):
+        while (tok := self._peek()) is not None and tok.type == "OP" and tok.value.lower() == "and":
             self._eat("OP")
             rhs = self._parse_not()
             node = BinaryOp(node, "and", rhs)
@@ -863,11 +853,7 @@ class _FilterParser:
         Returns:
             Expr: The parsed NOT expression.
         """
-        if (
-            (tok := self._peek()) is not None
-            and tok.type == "OP"
-            and tok.value.lower() == "not"
-        ):
+        if (tok := self._peek()) is not None and tok.type == "OP" and tok.value.lower() == "not":
             self._eat("OP")
             return UnaryOp("not", self._parse_cmp())
         return self._parse_cmp()
@@ -880,11 +866,7 @@ class _FilterParser:
         """
         left = self._parse_primary()
         tok = self._peek()
-        if (
-            tok
-            and tok.type == "OP"
-            and tok.value.lower() in {"eq", "ne", "gt", "ge", "lt", "le"}
-        ):
+        if tok and tok.type == "OP" and tok.value.lower() in {"eq", "ne", "gt", "ge", "lt", "le"}:
             op = tok.value.lower()
             self._eat("OP")
             right = self._parse_primary()
@@ -958,14 +940,14 @@ class _FilterParser:
 
 if __name__ == "__main__":
     """Example usage of the FilterExpression API.
-    
+
     This section demonstrates both approaches:
     1. Programmatic filter building using the fluent API
     2. Parsing existing OData filter strings
-    
+
     Run this file directly to see example output:
         python -m src.adpapi.odata_filters
-    
+
     Examples cover:
     - Simple equality filters
     - Comparison operators (eq, ne, gt, ge, lt, le)
@@ -986,26 +968,20 @@ if __name__ == "__main__":
     print(f"hireDate >= '2020-01-01':\n  {filter2.to_odata()}\n")
 
     # String functions
-    filter3 = FilterExpression.field("worker.person.legalName.familyName").contains(
-        "Smith"
-    )
+    filter3 = FilterExpression.field("worker.person.legalName.familyName").contains("Smith")
     print(f"familyName contains 'Smith':\n  {filter3.to_odata()}\n")
 
     # Complex expressions with and/or operators (wrap in FilterExpression)
     filter4 = FilterExpression(
         FilterExpression.field("worker.person.legalName.givenName").eq("John")
-    ) & FilterExpression(
-        FilterExpression.field("worker.person.legalName.familyName").eq("Doe")
-    )
+    ) & FilterExpression(FilterExpression.field("worker.person.legalName.familyName").eq("Doe"))
     print(f"givenName = 'John' AND familyName = 'Doe':\n  {filter4.to_odata()}\n")
 
     # Complex expression with or
     filter5 = FilterExpression(
         FilterExpression.field("department").eq("Engineering")
     ) | FilterExpression(FilterExpression.field("department").eq("Sales"))
-    print(
-        f"department = 'Engineering' OR department = 'Sales':\n  {filter5.to_odata()}\n"
-    )
+    print(f"department = 'Engineering' OR department = 'Sales':\n  {filter5.to_odata()}\n")
 
     # Using isin for multiple values
     filter6 = FilterExpression.field("status").isin(["Active", "OnLeave", "Pending"])
@@ -1018,9 +994,7 @@ if __name__ == "__main__":
     print("=== Parsing OData Filter Strings ===\n")
 
     # Parse existing OData filter strings
-    odata_str = (
-        "(worker.person.legalName.givenName eq 'John') and (hireDate ge '2020-01-01')"
-    )
+    odata_str = "(worker.person.legalName.givenName eq 'John') and (hireDate ge '2020-01-01')"
     try:
         filter8 = FilterExpression.from_string(odata_str)
         print(f"Parsed filter:\n  Input:  {odata_str}")
