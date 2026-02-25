@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write      # create GitHub release
+      id-token: write      # OIDC to PyPI (trusted publishing)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: pipx install uv
+
+      - name: Install deps
+        run: uv sync --dev
+
+      - name: Run unit tests
+        run: uv run pytest -m "not golden"
+
+      - name: Build distributions
+        run: uv build
+        # uv build produces dist/*  :contentReference[oaicite:3]{index=3}
+
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # trusted publishing requires id-token: write and no password fields :contentReference[oaicite:4]{index=4}
+
+      - name: Create GitHub Release + upload dist/*
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
