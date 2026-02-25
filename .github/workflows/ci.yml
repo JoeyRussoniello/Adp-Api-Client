@@ -3,6 +3,10 @@ on:
   pull_request:
   push:
     branches: [ main ]
+    paths: [
+      'src/**',
+      'tests/**'
+    ]
 
 jobs:
   test:
