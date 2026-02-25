@@ -356,7 +356,7 @@ class AdpApiClient:
 
         if inject_path_params:
             param_sets = resolve_path_parameter_sets(endpoint, kwargs)
-            for response, param_set in zip(output, param_sets):
+            for response, param_set in zip(output, param_sets, strict=False):
                 response.update(param_set)
 
         return output

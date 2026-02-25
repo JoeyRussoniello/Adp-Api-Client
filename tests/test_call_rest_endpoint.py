@@ -500,9 +500,7 @@ class TestInjectPathParams:
             "adpapi.sessions.ApiSession._request",
             return_value=_make_json_response(expected),
         ):
-            result = client.call_rest_endpoint(
-                "/hr/v2/workers/{workerId}", workerId="ABC"
-            )
+            result = client.call_rest_endpoint("/hr/v2/workers/{workerId}", workerId="ABC")
         assert "workerId" not in result[0]
 
     def test_single_request_injects_param(self, client):
