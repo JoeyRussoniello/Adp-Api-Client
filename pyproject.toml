@@ -1,6 +1,6 @@
 [project]
 name = "adpapi"
-version = "1.4.3"
+version = "1.4.4"
 description = "A small python SDK for the ADP Workforce Now API"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
