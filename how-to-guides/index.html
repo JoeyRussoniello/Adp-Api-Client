@@ -333,6 +333,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#preserve-request-ids-in-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserve Request IDs in Responses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -504,6 +515,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#preserve-request-ids-in-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserve Request IDs in Responses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -653,6 +675,30 @@ with AdpApiClient(credentials) as client:
 </tbody>
 </table>
 <p>The token is refreshed once before the batch starts, so all threads share the same valid token, there is no risk of concurrent token refresh conflicts.</p>
+<h2 id="preserve-request-ids-in-responses">Preserve Request IDs in Responses</h2>
+<p>Some ADP endpoints do not include the requested identifier (e.g. the associate OID) in the response body. Use <code>inject_path_params=True</code> to merge the path parameters into each response dict so you never lose track of which response belongs to which ID:</p>
+<pre><code class="language-python">results = client.call_rest_endpoint(
+    endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+    associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;],
+    inject_path_params=True,
+)
+
+# Each response now contains the associateOID that produced it
+for worker in results:
+    print(worker[&quot;associateOID&quot;], worker[&quot;workers&quot;])
+    # &quot;G3349PRDL000001&quot; [...]
+    # &quot;G3349PRDL000002&quot; [...]
+</code></pre>
+<p>This works with single values, lists, and multiple path parameters:</p>
+<pre><code class="language-python">result = client.call_rest_endpoint(
+    endpoint=&quot;/hr/v2/workers/{associateOID}/jobs/{jobId}&quot;,
+    associateOID=&quot;G3349PRDL000001&quot;,
+    jobId=&quot;J42&quot;,
+    inject_path_params=True,
+)
+# result[0][&quot;associateOID&quot;] == &quot;G3349PRDL000001&quot;
+# result[0][&quot;jobId&quot;] == &quot;J42&quot;
+</code></pre>
 <h2 id="configure-logging">Configure Logging</h2>
 <p>Enable logging to see token refresh events, pagination progress, and request errors:</p>
 <pre><code class="language-python">from adpapi.logger import configure_logging
