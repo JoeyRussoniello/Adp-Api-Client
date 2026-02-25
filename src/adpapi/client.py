@@ -19,7 +19,11 @@ from urllib3.util.retry import Retry
 
 from adpapi.odata_filters import FilterExpression
 from adpapi.sessions import ApiSession, RequestMethod
-from adpapi.utils import substitute_path_parameters, validate_path_parameters
+from adpapi.utils import (
+    resolve_path_parameter_sets,
+    substitute_path_parameters,
+    validate_path_parameters,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -296,6 +300,7 @@ class AdpApiClient:
         timeout: int = DEFAULT_TIMEOUT,
         params: dict | None = None,
         max_workers: int = 1,
+        inject_path_params: bool = False,
         **kwargs,
     ) -> list[dict]:
         """Call a RestAPI Endpoint
@@ -307,6 +312,9 @@ class AdpApiClient:
             timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.
             params (Optional[dict], optional): query parameters for the request. Defaults to None.
             max_workers (int, optional): maximum number of threads for parallel requests. Defaults to 1 (sequential).
+            inject_path_params (bool, optional): when True, merge the resolved path parameters
+                into each response dict. Useful when the API does not echo back identifiers
+                (e.g. AOIDs) in the response body. Defaults to False.
             **kwargs: path parameters to substitute into the endpoint template (e.g workerId=['123', '456']) - can be single values or lists of values for batch requests
         Raises:
             ValueError: if required path parameters are missing or if endpoint format is incorrect
@@ -345,6 +353,11 @@ class AdpApiClient:
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             output = list(executor.map(_fetch, urls))
+
+        if inject_path_params:
+            param_sets = resolve_path_parameter_sets(endpoint, kwargs)
+            for response, param_set in zip(output, param_sets):
+                response.update(param_set)
 
         return output
 

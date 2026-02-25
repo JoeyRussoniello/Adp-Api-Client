@@ -80,6 +80,45 @@ def substitute_path_parameters(path: str, params: dict[str, Any]) -> list[str]:
     return result_paths
 
 
+def resolve_path_parameter_sets(path: str, params: dict[str, Any]) -> list[dict[str, str]]:
+    """
+    Resolve the set of path parameters for each URL that would be generated.
+
+    Returns one dict per URL, containing the scalar parameter values used
+    for that specific request. Mirrors the expansion logic in
+    ``substitute_path_parameters``.
+
+    Args:
+        path: URL path template (e.g., '/hr/workers/{workerId}')
+        params: Dictionary of parameter values (can be single values or lists)
+
+    Returns:
+        List of dicts, one per generated URL, with string values
+
+    Example:
+        >>> resolve_path_parameter_sets('/hr/workers/{workerId}', {'workerId': ['A', 'B']})
+        [{'workerId': 'A'}, {'workerId': 'B'}]
+    """
+    path_param_names = set(extract_path_parameters(path))
+    # Build base scalar params (only those that appear in the path template)
+    base_params = {
+        k: str(v) for k, v in params.items() if k in path_param_names and not isinstance(v, list)
+    }
+
+    list_params = {k: v for k, v in params.items() if k in path_param_names and isinstance(v, list)}
+
+    if not list_params:
+        return [base_params] if base_params else [{}]
+
+    list_param_name, list_values = next(iter(list_params.items()))
+    result = []
+    for value in list_values:
+        param_set = base_params.copy()
+        param_set[list_param_name] = str(value)
+        result.append(param_set)
+    return result
+
+
 def _substitute_single_path(path: str, params: dict[str, Any]) -> str:
     """
     Substitute a single set of parameters into a path template.
