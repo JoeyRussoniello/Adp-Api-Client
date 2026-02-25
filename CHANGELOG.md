@@ -2,6 +2,10 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.4.5] - 2026-02-25
+
+- Resolved bug where certificate and key paths are not properly configured in `SpCredentials.from_env()` calls.
+
 ## [1.4.4] - 2026-02-25
 
 ### Added
