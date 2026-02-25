@@ -431,12 +431,25 @@ class TestMaxWorkers:
 
     def test_parallel_results_preserve_order(self, client):
         """Results stay ordered even with multiple workers."""
-        responses = [
-            _make_json_response({"id": "first"}),
-            _make_json_response({"id": "second"}),
-            _make_json_response({"id": "third"}),
-        ]
-        with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
+        # Map responses by URL so ordering is independent of thread scheduling.
+        # Using side_effect as a list is not thread-safe: threads may call the
+        # mock in any order, especially on Python 3.13+ where thread scheduling
+        # is less predictable.
+        url_responses = {
+            "/hr/v2/workers/1": {"id": "first"},
+            "/hr/v2/workers/2": {"id": "second"},
+            "/hr/v2/workers/3": {"id": "third"},
+        }
+
+        def _url_based_response(url, **kwargs):
+            for path, data in url_responses.items():
+                if url.endswith(path):
+                    return _make_json_response(data)
+            raise ValueError(f"Unexpected URL: {url}")
+
+        with patch(
+            "adpapi.sessions.ApiSession._request", side_effect=_url_based_response
+        ):
             result = client.call_rest_endpoint(
                 "/hr/v2/workers/{workerId}",
                 workerId=["1", "2", "3"],
