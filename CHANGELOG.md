@@ -2,6 +2,12 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.4.4] - 2026-02-25
+
+### Added
+
+- Automatic release configuration and example publish through `github/workflows/release.yml`  and trusted publishing
+
 ## [1.4.3] - 2026-02-25
 
 ### Fixed
