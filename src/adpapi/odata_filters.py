@@ -48,14 +48,14 @@ class Expr:
         """
         raise NotImplementedError
 
-    def __and__(self, other: "Expr") -> "BinaryOp":
+    def __and__(self, other: "Expr") -> "Expr":
         """Combine two expressions with logical AND.
 
         Args:
             other: Another Expr to combine with AND.
 
         Returns:
-            BinaryOp: A new binary operation node representing the AND operation.
+            Expr: A new binary operation node representing the AND operation.
 
         Example:
             >>> expr1 = FilterExpression.field('age').gt(18)
@@ -64,14 +64,14 @@ class Expr:
         """
         return BinaryOp(self, "and", other)
 
-    def __or__(self, other: "Expr") -> "BinaryOp":
+    def __or__(self, other: "Expr") -> "Expr":
         """Combine two expressions with logical OR.
 
         Args:
             other: Another Expr to combine with OR.
 
         Returns:
-            BinaryOp: A new binary operation node representing the OR operation.
+            Expr: A new binary operation node representing the OR operation.
 
         Example:
             >>> expr1 = FilterExpression.field('status').eq('Active')
@@ -80,11 +80,11 @@ class Expr:
         """
         return BinaryOp(self, "or", other)
 
-    def __invert__(self) -> "UnaryOp":
+    def __invert__(self) -> "Expr":
         """Invert an expression with logical NOT.
 
         Returns:
-            UnaryOp: A new unary operation node applying NOT to this expression.
+            Expr: A new unary operation node applying NOT to this expression.
 
         Example:
             >>> expr = FilterExpression.field('isTerminated').eq(True)
@@ -270,10 +270,10 @@ class Field(Expr):
         if not values:
             # empty IN -> false; represent as (1 eq 0)
             return BinaryOp(Literal(1), "eq", Literal(0))
-        expr = None
-        for v in values:
+        expr: Expr = BinaryOp(self, "eq", literal(values[0]))
+        for v in values[1:]:
             clause = BinaryOp(self, "eq", literal(v))
-            expr = clause if expr is None else BinaryOp(expr, "or", clause)
+            expr = BinaryOp(expr, "or", clause)
         return expr
 
     def to_odata(self) -> str:
@@ -818,8 +818,9 @@ class _FilterParser:
             ValueError: If the filter string has syntax errors or unexpected tokens.
         """
         expr = self._parse_or()
-        if self._peek():
-            raise ValueError(f"Unexpected token: {self._peek().value}")
+        tok = self._peek()
+        if tok:
+            raise ValueError(f"Unexpected token: {tok.value}")
         return expr
 
     def _parse_or(self) -> Expr:
@@ -830,9 +831,9 @@ class _FilterParser:
         """
         node = self._parse_and()
         while (
-            self._peek()
-            and self._peek().type == "OP"
-            and self._peek().value.lower() == "or"
+            (tok := self._peek()) is not None
+            and tok.type == "OP"
+            and tok.value.lower() == "or"
         ):
             self._eat("OP")
             rhs = self._parse_and()
@@ -847,9 +848,9 @@ class _FilterParser:
         """
         node = self._parse_not()
         while (
-            self._peek()
-            and self._peek().type == "OP"
-            and self._peek().value.lower() == "and"
+            (tok := self._peek()) is not None
+            and tok.type == "OP"
+            and tok.value.lower() == "and"
         ):
             self._eat("OP")
             rhs = self._parse_not()
@@ -863,9 +864,9 @@ class _FilterParser:
             Expr: The parsed NOT expression.
         """
         if (
-            self._peek()
-            and self._peek().type == "OP"
-            and self._peek().value.lower() == "not"
+            (tok := self._peek()) is not None
+            and tok.type == "OP"
+            and tok.value.lower() == "not"
         ):
             self._eat("OP")
             return UnaryOp("not", self._parse_cmp())
