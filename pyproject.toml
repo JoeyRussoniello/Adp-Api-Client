@@ -41,6 +41,8 @@ dev = [
     "mkdocs>=1.6.1",
     "python-dotenv>=1.2.1",
     "ruff>=0.15.2",
+    "mypy>=1.19.1",
+    "types-requests>=2.31.0",
 ]
 optional = [
     'black>=22.0.0', 'flake8>=4.0.0'
@@ -50,3 +52,7 @@ optional = [
 markers = [
     "golden: Integration tests requiring real API credentials (skipped by default)"
 ]
+
+[tool.mypy]
+mypy_path = "src"
+packages = ["adpapi"]
