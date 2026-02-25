@@ -1,7 +1,7 @@
 [project]
 name = "adpapi"
 version = "1.4.2"
-description = "Add your description here"
+description = "A small python SDK for the ADP Workforce Now API"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 authors = [
@@ -36,7 +36,7 @@ dev = [
     'pytest>=7.0.0',
     'pytest-cov>=4.0.0',
     "build>=1.4.0",
-    "mkdocstrings[python]>=1.0.2",
+    "mkdocstrings[python]>=1.0.1",
     "mkdocs-material>=9.7.1",
     "mkdocs>=1.6.1",
     "python-dotenv>=1.2.1",
@@ -49,11 +49,3 @@ optional = [
 markers = [
     "golden: Integration tests requiring real API credentials (skipped by default)"
 ]
-
-# [tool.pytest.ini_options]
-# addopts = [
-#     "--import-mode=importlib",
-# ]
-# pythonpath = [
-#     "src/adpapi",
-# ]
