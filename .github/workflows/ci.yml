@@ -11,6 +11,7 @@ on:
       '.github/workflows/**',
       'mkdocs.yml'
     ]
+    paths-ignore: ['.github/workflows/docs.yml']  
 
 jobs:
   test:
