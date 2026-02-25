@@ -2,6 +2,14 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.5.0] - 2026-02-25
+
+### Added
+
+- `inject_path_params` option on `call_rest_endpoint` — when `True`, the resolved path
+  parameters are merged into each response dict, ensuring identifiers like AOIDs are
+  preserved even when the API omits them from the response body.
+
 ## [1.4.5] - 2026-02-25
 
 - Resolved bug where certificate and key paths are not properly configured in `SpCredentials.from_env()` calls.
