@@ -301,7 +301,7 @@ class AdpApiClient:
         params: dict | None = None,
         max_workers: int = 1,
         inject_path_params: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[dict]:
         """Call a RestAPI Endpoint
 
