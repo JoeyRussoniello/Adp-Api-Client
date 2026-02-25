@@ -61,6 +61,14 @@ with AdpApiClient(credentials) as api:
         page_size=100,     # ADP max
         max_requests=1,    # increase/remove for full exports
     )
+
+    # Or call rest endpoints with url pagination
+    some_workers = api.call_rest_endpoint(
+        endpoint = '/hr/v1/workers/{aoid}',
+        aoid = ['0000000001', '0000000002', '0000000003', '0000000004'],
+        masked = False,
+        inject_params = True # Inject AOID into each response dict for downstream processing
+    )
 ```
 
 ## Filtering with OData
