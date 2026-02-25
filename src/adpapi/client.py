@@ -11,14 +11,14 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from adpapi.odata_filters import FilterExpression
-from adpapi.sessions import ApiSession
+from adpapi.sessions import ApiSession, RequestMethod
 from adpapi.utils import substitute_path_parameters, validate_path_parameters
 
 logger = logging.getLogger(__name__)
@@ -58,11 +58,18 @@ class AdpCredentials:
                 f"No environment variables found for KEY_PATH, defaulting to {KEY_DEFAULT}"
             )
 
+        if client_id is None or client_secret is None:
+            raise ValueError(
+                "CLIENT_ID and CLIENT_SECRET environment variables must be set"
+            )
+
         return AdpCredentials(client_id, client_secret)
 
 
 class AdpApiClient:
     def __init__(self, credentials: AdpCredentials):
+        if credentials.cert_path is None or credentials.key_path is None:
+            raise ValueError("Certificate path and key path must not be None")
         if not os.path.exists(credentials.cert_path) or not os.path.exists(
             credentials.key_path
         ):
@@ -78,7 +85,7 @@ class AdpApiClient:
         self._setup_retry_strategy()
 
         # Token expiration tracking
-        self.token = None
+        self.token: Optional[str] = None
         self.token_expires_at = 0
 
     @property
@@ -212,9 +219,9 @@ class AdpApiClient:
         endpoint: str,
         select: Optional[List[str]] = None,
         filters: Optional[Union[str, FilterExpression]] = None,
-        masked: Optional[bool] = True,
-        timeout: Optional[int] = DEFAULT_TIMEOUT,
-        page_size: Optional[int] = 100,
+        masked: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
+        page_size: int = 100,
         max_requests: Optional[int] = None,
     ) -> List[Dict]:
         """Call any Registered ADP Endpoint
@@ -250,7 +257,7 @@ class AdpApiClient:
         # Populate here instead of mutable default arguments
         if select is None:
             select = []
-        select = ",".join(select)
+        select_param = ",".join(select)
         output = []
         skip = 0
 
@@ -263,10 +270,10 @@ class AdpApiClient:
             self.session, self.cert, get_headers_fn, timeout=timeout
         )
 
-        params = {"$top": page_size}
-        if select:
-            logging.debug(f"Restricting OData Selection to {select}")
-            params["$select"] = select
+        params: Dict[str, Any] = {"$top": page_size}
+        if select_param:
+            logging.debug(f"Restricting OData Selection to {select_param}")
+            params["$select"] = select_param
         if filter_param:
             logging.debug(f"Filtering Results according to OData query: {filter_param}")
             params["$filter"] = filter_param
@@ -299,9 +306,9 @@ class AdpApiClient:
     def call_rest_endpoint(
         self,
         endpoint: str,
-        method: Optional[str] = "GET",
-        masked: Optional[bool] = True,
-        timeout: Optional[int] = DEFAULT_TIMEOUT,
+        method: str = "GET",
+        masked: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
         params: Optional[dict] = None,
         max_workers: int = 1,
         **kwargs,
@@ -350,7 +357,7 @@ class AdpApiClient:
 
         def _fetch(url: str) -> Dict:
             full_url = self.base_url + url
-            response = call_session._request(url=full_url, method=method)
+            response = call_session._request(url=full_url, method=RequestMethod(method))
             try:
                 data = response.json()
                 return data
