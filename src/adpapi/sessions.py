@@ -60,7 +60,7 @@ class ApiSession:
         raise ValueError(f"Unsupported method {method}")
 
     def _request(
-        self, url: str, method: Optional[RequestMethod] = RequestMethod.GET
+        self, url: str, method: RequestMethod = RequestMethod.GET
     ) -> requests.Response:
         """Execute HTTP request with specified method, headers, params, and optional data.
 
@@ -76,6 +76,7 @@ class ApiSession:
         """
         request_fn = self._get_request_function(method)
         # Generate headers on call time for up-to-date token
+        assert self.get_headers is not None
         headers = self.get_headers()
         kwargs = {
             "headers": headers,
