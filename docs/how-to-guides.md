@@ -124,6 +124,37 @@ with AdpApiClient(credentials) as client:
 
 The token is refreshed once before the batch starts, so all threads share the same valid token, there is no risk of concurrent token refresh conflicts.
 
+## Preserve Request IDs in Responses
+
+Some ADP endpoints do not include the requested identifier (e.g. the associate OID) in the response body. Use `inject_path_params=True` to merge the path parameters into each response dict so you never lose track of which response belongs to which ID:
+
+```python
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID=["G3349PRDL000001", "G3349PRDL000002"],
+    inject_path_params=True,
+)
+
+# Each response now contains the associateOID that produced it
+for worker in results:
+    print(worker["associateOID"], worker["workers"])
+    # "G3349PRDL000001" [...]
+    # "G3349PRDL000002" [...]
+```
+
+This works with single values, lists, and multiple path parameters:
+
+```python
+result = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}/jobs/{jobId}",
+    associateOID="G3349PRDL000001",
+    jobId="J42",
+    inject_path_params=True,
+)
+# result[0]["associateOID"] == "G3349PRDL000001"
+# result[0]["jobId"] == "J42"
+```
+
 ## Configure Logging
 
 Enable logging to see token refresh events, pagination progress, and request errors:
