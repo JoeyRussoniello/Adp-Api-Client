@@ -2,6 +2,19 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.4.3] - 2026-02-25
+
+### Fixed
+- Resolved all mypy type-checking errors across the codebase
+- Added `py.typed` marker for PEP 561 compliance
+- Fixed `Optional` parameter types where `None` was never a valid input
+- Improved type narrowing in OData filter parser (`_peek()` usage)
+- Added runtime validation for missing environment variables in `AdpCredentials.from_env()`
+
+### Added
+- `types-requests` dev dependency for request stubs
+- `[tool.mypy]` configuration in `pyproject.toml`
+
 ## [1.4.2] - 2026-02-24
 
 ### Fixed
