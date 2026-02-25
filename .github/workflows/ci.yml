@@ -5,7 +5,11 @@ on:
     branches: [ main ]
     paths: [
       'src/**',
-      'tests/**'
+      'tests/**',
+      'pyproject.toml',
+      'uv.lock',
+      '.github/workflows/**',
+      'mkdocs.yml'
     ]
 
 jobs:
