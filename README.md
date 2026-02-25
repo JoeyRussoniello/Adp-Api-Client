@@ -2,6 +2,10 @@
 Minimal Python client for the ADP Workforce Now API using OAuth2 client credentials + mutual TLS (mTLS).
 
 [![CI](https://github.com/JoeyRussoniello/Adp-Api-Client/actions/workflows/ci.yml/badge.svg)](https://github.com/JoeyRussoniello/Adp-Api-Client/actions/workflows/ci.yml)
+[![Docs](https://github.com/JoeyRussoniello/Adp-Api-Client/actions/workflows/docs.yml/badge.svg)](https://github.com/JoeyRussoniello/Adp-Api-Client/actions/workflows/docs.yml)
+[![PyPI](https://img.shields.io/pypi/v/adpapi)](https://pypi.org/project/adpapi/)
+[![Python](https://img.shields.io/pypi/pyversions/adpapi)](https://pypi.org/project/adpapi/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://JoeyRussoniello.github.io/Adp-Api-Client/)
 
 ## Install
