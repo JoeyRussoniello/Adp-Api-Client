@@ -119,7 +119,7 @@ Import Syntax Changes to
 ```python
 %run monofile.ipynb # Or whatever monofile has been renamed to in the notebook client
 
-# Now, imports are no longer necessary and the top-level Api objects are exposed at top-level
+# Now, imports are no longer necessary and the top-level Api objects are exposed in the main namespace
 configure_logging()
 with AdpApiClient(...) as api:
     api.call_endpoint(...)
