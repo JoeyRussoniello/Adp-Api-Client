@@ -483,3 +483,86 @@ class TestMaxWorkers:
                 workerId=["A", "B"],
                 max_workers=2,
             )
+
+
+# ============================================================================
+# INJECT PATH PARAMS TESTS
+# ============================================================================
+
+
+class TestInjectPathParams:
+    """inject_path_params parameter behavior."""
+
+    def test_disabled_by_default(self, client):
+        """Path params are NOT injected when inject_path_params is not set."""
+        expected = {"workers": []}
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}", workerId="ABC"
+            )
+        assert "workerId" not in result[0]
+
+    def test_single_request_injects_param(self, client):
+        """A single-value path param is merged into the response dict."""
+        expected = {"workers": [{"name": "Jane"}]}
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId="AOID123",
+                inject_path_params=True,
+            )
+        assert result[0]["workerId"] == "AOID123"
+        assert result[0]["workers"] == [{"name": "Jane"}]
+
+    def test_batch_request_injects_correct_param_per_response(self, client):
+        """Each response in a batch gets its own resolved path param."""
+        responses = [
+            _make_json_response({"name": "Alice"}),
+            _make_json_response({"name": "Bob"}),
+            _make_json_response({"name": "Carol"}),
+        ]
+        with patch("adpapi.sessions.ApiSession._request", side_effect=responses):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=["W1", "W2", "W3"],
+                inject_path_params=True,
+            )
+        assert result[0]["workerId"] == "W1"
+        assert result[1]["workerId"] == "W2"
+        assert result[2]["workerId"] == "W3"
+
+    def test_multiple_path_params_injected(self, client):
+        """Multiple scalar path params are all injected."""
+        expected = {"job": "data"}
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response(expected),
+        ):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}/jobs/{jobId}",
+                workerId="W1",
+                jobId="J1",
+                inject_path_params=True,
+            )
+        assert result[0]["workerId"] == "W1"
+        assert result[0]["jobId"] == "J1"
+        assert result[0]["job"] == "data"
+
+    def test_injected_params_are_strings(self, client):
+        """Injected path parameter values are converted to strings."""
+        with patch(
+            "adpapi.sessions.ApiSession._request",
+            return_value=_make_json_response({}),
+        ):
+            result = client.call_rest_endpoint(
+                "/hr/v2/workers/{workerId}",
+                workerId=12345,
+                inject_path_params=True,
+            )
+        assert result[0]["workerId"] == "12345"
