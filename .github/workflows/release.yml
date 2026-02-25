@@ -26,6 +26,24 @@ jobs:
       - name: Install deps
         run: uv sync --dev
 
+      - name: Verify tag matches package version (uv)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF_NAME}"     # e.g. v1.4.3
+          TAG_VERSION="${TAG#v}"       # -> 1.4.3
+
+          PKG_VERSION="$(uv version --short)"  # -> 1.4.3
+
+          echo "Tag version: ${TAG_VERSION}"
+          echo "uv version:  ${PKG_VERSION}"
+
+          if [[ "${TAG_VERSION}" != "${PKG_VERSION}" ]]; then
+            echo "::error title=Version mismatch::Tag '${TAG_VERSION}' does not match uv version '${PKG_VERSION}'."
+            exit 1
+          fi
+
       - name: Run unit tests
         run: uv run pytest -m "not golden"
 
