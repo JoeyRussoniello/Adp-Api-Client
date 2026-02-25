@@ -2,6 +2,8 @@
 
 Welcome to the ADP API Client documentation. This project provides a Python client for interacting with the ADP Workforce Now API using OAuth 2.0 with certificate-based authentication.
 
+> *NOTE*: This project is not formally associated with the ADP API Client Central. Rather, it is an open-source SDK for users of the ADP API service.
+
 ## Quick Links
 
 - **[Getting Started](tutorials.md)** - Start building with the ADP API Client
