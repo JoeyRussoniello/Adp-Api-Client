@@ -49,12 +49,7 @@ cols = [
 credentials = AdpCredentials.from_env()
 
 # Define your API Client
-with AdpApiClient(
-    client_id=os.environ["CLIENT_ID"],
-    client_secret=os.environ["CLIENT_SECRET"],
-    cert_path=os.getenv("CERT_PATH", "certificate.pem"),
-    key_path=os.getenv("KEY_PATH", "adp.key"),
-) as api:
+with AdpApiClient(credentials) as api:
     workers = api.call_endpoint(
         endpoint="/hr/v2/workers",
         select=cols,
