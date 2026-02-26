@@ -3,10 +3,21 @@
 
 import json
 import sys
+import tomllib
 from pathlib import Path
 
 import yaml
 
+
+def extract_package_version() -> str:
+    """Extract the package version from pyproject.toml"""
+    pyproject = Path('pyproject.toml')
+    with open(pyproject, 'rb') as f:
+        data = tomllib.load(f)
+    version = data.get('project').get('version')
+    if version is None:
+        raise ValueError('Expect project version in pyproject.toml')
+    return version
 
 def extract_imports(code: str) -> tuple[list[str], str]:
     """Extract imports from code and return (imports, code_without_imports).
@@ -126,9 +137,13 @@ def _split_source(code: str) -> list[str]:
     return [line + "\n" for line in lines[:-1]] + [lines[-1]]
 
 
-def generate_notebook(all_imports: list[str], files: dict) -> dict:
+def generate_notebook(all_imports: list[str], files: dict, version: str) -> dict:
     """Generate notebook structure with consolidated imports and file contents."""
-    cells = []
+    cells = [{
+        'cell_type': 'markdown',
+        'metadata': {},
+        'source': [f'## `adpapi` v{version}']
+    }]
 
     # Add imports cell
     if all_imports:
@@ -211,6 +226,7 @@ def lint_notebook(notebook_file: Path):
 def main():
     """Main function to generate monofile."""
     # Define paths
+    package_version = extract_package_version()
     project_root = Path(__file__).parent.parent
     src_dir = project_root / "src" / "adpapi"
     config_file = Path(__file__).parent / "config.yaml"
@@ -248,7 +264,7 @@ def main():
     print(f"Consolidated to {len(all_imports)} unique imports")
 
     # Generate notebook
-    notebook = generate_notebook(all_imports, files)
+    notebook = generate_notebook(all_imports, files, package_version)
 
     # Write notebook
     with open(output_file, "w") as f:
