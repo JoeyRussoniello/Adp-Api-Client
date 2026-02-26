@@ -11,13 +11,14 @@ import yaml
 
 def extract_package_version() -> str:
     """Extract the package version from pyproject.toml"""
-    pyproject = Path('pyproject.toml')
-    with open(pyproject, 'rb') as f:
+    pyproject = Path("pyproject.toml")
+    with open(pyproject, "rb") as f:
         data = tomllib.load(f)
-    version = data.get('project').get('version')
+    version = data.get("project").get("version")
     if version is None:
-        raise ValueError('Expect project version in pyproject.toml')
+        raise ValueError("Expect project version in pyproject.toml")
     return version
+
 
 def extract_imports(code: str) -> tuple[list[str], str]:
     """Extract imports from code and return (imports, code_without_imports).
@@ -139,11 +140,7 @@ def _split_source(code: str) -> list[str]:
 
 def generate_notebook(all_imports: list[str], files: dict, version: str) -> dict:
     """Generate notebook structure with consolidated imports and file contents."""
-    cells = [{
-        'cell_type': 'markdown',
-        'metadata': {},
-        'source': [f'# `adpapi` v{version}']
-    }]
+    cells = [{"cell_type": "markdown", "metadata": {}, "source": [f"# `adpapi` v{version}"]}]
 
     # Add imports cell
     if all_imports:
@@ -196,6 +193,7 @@ def generate_notebook(all_imports: list[str], files: dict, version: str) -> dict
 
     return notebook
 
+
 def lint_notebook(notebook_file: Path):
     """Lint the generated notebook using ruff."""
     import subprocess
@@ -203,14 +201,14 @@ def lint_notebook(notebook_file: Path):
     print(f"Linting notebook: {notebook_file}")
     try:
         subprocess.run(
-            ['ruff', 'format', str(notebook_file.absolute())],
+            ["ruff", "format", str(notebook_file.absolute())],
             capture_output=True,
-            text = True,
-            check = True,
+            text=True,
+            check=True,
         )
-        print('Formatted notebook successfully.')
+        print("Formatted notebook successfully.")
         subprocess.run(
-            ["ruff", "check", '--fix', '--unsafe-fixes', str(notebook_file.absolute())],
+            ["ruff", "check", "--fix", "--unsafe-fixes", str(notebook_file.absolute())],
             capture_output=True,
             text=True,
             check=True,
@@ -218,10 +216,11 @@ def lint_notebook(notebook_file: Path):
         print("Linting passed with no issues.")
     except subprocess.CalledProcessError as e:
         print("Linting issues found:")
-        print(f'Command: {e.cmd}')
+        print(f"Command: {e.cmd}")
         print(e.stdout)
         print(e.stderr)
         sys.exit(1)
+
 
 def main():
     """Main function to generate monofile."""
@@ -272,6 +271,7 @@ def main():
 
     print(f"Generated monofile: {output_file}")
     lint_notebook(output_file)
+
 
 if __name__ == "__main__":
     main()
