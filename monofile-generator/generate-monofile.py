@@ -142,7 +142,7 @@ def generate_notebook(all_imports: list[str], files: dict, version: str) -> dict
     cells = [{
         'cell_type': 'markdown',
         'metadata': {},
-        'source': [f'## `adpapi` v{version}']
+        'source': [f'# `adpapi` v{version}']
     }]
 
     # Add imports cell
