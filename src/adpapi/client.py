@@ -36,7 +36,7 @@ CERT_DEFAULT = "certificate.pem"
 KEY_DEFAULT = "adp.key"
 
 
-@dataclass(frozen=True)
+@dataclass
 class AdpCredentials:
     client_id: str
     client_secret: str
