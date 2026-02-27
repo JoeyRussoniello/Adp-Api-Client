@@ -8,14 +8,19 @@ import logging
 
 
 def configure_logging():
-    logging.basicConfig(
-        filename="app.log",
-        filemode="w",
-        level=logging.DEBUG,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-    )
-    # Add console handler
+    logger = logging.getLogger("adpapi")
+    logger.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+
+    # File handler
+    file_handler = logging.FileHandler("app.log", mode="w")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    # Console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-    logging.getLogger().addHandler(console_handler)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
