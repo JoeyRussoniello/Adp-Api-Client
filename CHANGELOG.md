@@ -2,6 +2,12 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.5.1] - 2026-02-26
+
+### Fixed
+
+- Unfroze `AdpCredentials` object, to make it an extensible base class with property access. This way, the base class can be extended to pull secrets from Online Key Vaults, using `key_path` and `cert_path` as properties, not settable attributes.
+
 ## [1.5.0] - 2026-02-25
 
 ### Added
