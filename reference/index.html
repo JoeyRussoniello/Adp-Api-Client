@@ -1072,6 +1072,22 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
                   <code>None</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>method</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>HTTP method for the request. Defaults to 'GET'.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;GET&#39;</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -1124,60 +1140,7 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/adpapi/client.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">266</span>
 <span class="normal">267</span>
 <span class="normal">268</span>
 <span class="normal">269</span>
@@ -1204,7 +1167,59 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">call_endpoint</span><span class="p">(</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">call_endpoint</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">select</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1213,6 +1228,7 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
     <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT</span><span class="p">,</span>
     <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">max_requests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Call any Registered ADP Endpoint</span>
 
@@ -1225,6 +1241,7 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
 <span class="sd">        timeout (int, optional): Time to wait on. Defaults to 30.</span>
 <span class="sd">        page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.</span>
 <span class="sd">        max_requests (Optional[int], optional): Maximum number of requests to make (for quick testing). Defaults to None.</span>
+<span class="sd">        method (str, optional): HTTP method for the request. Defaults to &#39;GET&#39;.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: When given an endpoint not following the call convention</span>
@@ -1241,43 +1258,40 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
     <span class="c1"># Output/Request Initialization</span>
     <span class="n">endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
     <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="n">endpoint</span>
-    <span class="n">filter_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
-    <span class="c1"># Populate here instead of mutable default arguments</span>
-    <span class="k">if</span> <span class="n">select</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">select</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">select_param</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+    <span class="n">request_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="n">query_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_query_params</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
     <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">skip</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="n">get_headers_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_masked_headers</span> <span class="k">if</span> <span class="n">masked</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unmasked_headers</span>
+    <span class="n">call_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_call_session</span><span class="p">(</span><span class="n">masked</span><span class="o">=</span><span class="n">masked</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
 
-    <span class="n">call_session</span> <span class="o">=</span> <span class="n">ApiSession</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="n">get_headers_fn</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-
-    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$top&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">select_param</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restricting OData Selection to </span><span class="si">{</span><span class="n">select_param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;$select&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">select_param</span>
-    <span class="k">if</span> <span class="n">filter_param</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtering Results according to OData query: </span><span class="si">{</span><span class="n">filter_param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;$filter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_param</span>
+    <span class="k">if</span> <span class="n">request_method</span> <span class="o">==</span> <span class="n">RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+        <span class="n">query_params</span><span class="p">[</span><span class="s2">&quot;$top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page_size</span>
+    <span class="k">elif</span> <span class="n">max_requests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_requests</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;max_requests &gt; 1 was provided for a non-GET request; only one request will be made.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;$skip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skip</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">query_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request_method</span> <span class="o">==</span> <span class="n">RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;$skip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skip</span>
+
         <span class="n">call_session</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_valid_token</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">call_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">call_session</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">request_method</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request_method</span> <span class="o">==</span> <span class="n">RequestMethod</span><span class="o">.</span><span class="n">GET</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;End of pagination reached (204 No Content)&quot;</span><span class="p">)</span>
             <span class="k">break</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># json.JSONDecodeError handling is centralized in _parse_json_response.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_json_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse JSON response: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">request_method</span> <span class="o">!=</span> <span class="n">RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+            <span class="k">break</span>
 
         <span class="k">if</span> <span class="n">max_requests</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_requests</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max Requests reached: </span><span class="si">{</span><span class="n">max_requests</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1394,6 +1408,38 @@ or OData strings can be automatically created from <code>adpapi.odata_filters.Fi
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>select</code>
+            </td>
+            <td>
+                  <code><span title="Optional">Optional</span>[<span title="List">List</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>OData select clause columns. Defaults to None.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>filters</code>
+            </td>
+            <td>
+                  <code><span title="Optional">Optional</span>[<span title="str">str</span> | <a class="autorefs autorefs-internal" title="adpapi.odata_filters.FilterExpression" href="../explanation/#adpapi.odata_filters.FilterExpression">FilterExpression</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>OData filter clause. Defaults to None.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>max_workers</code>
             </td>
             <td>
@@ -1473,59 +1519,7 @@ into each response dict. Useful when the API does not echo back identifiers
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/adpapi/client.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
-<span class="normal">309</span>
-<span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span>
-<span class="normal">330</span>
-<span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span>
-<span class="normal">338</span>
-<span class="normal">339</span>
-<span class="normal">340</span>
-<span class="normal">341</span>
-<span class="normal">342</span>
-<span class="normal">343</span>
-<span class="normal">344</span>
-<span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
 <span class="normal">350</span>
@@ -1540,13 +1534,64 @@ into each response dict. Useful when the API does not echo back identifiers
 <span class="normal">359</span>
 <span class="normal">360</span>
 <span class="normal">361</span>
-<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">call_rest_endpoint</span><span class="p">(</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">call_rest_endpoint</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
     <span class="n">masked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">select</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">FilterExpression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">inject_path_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -1559,6 +1604,8 @@ into each response dict. Useful when the API does not echo back identifiers
 <span class="sd">        masked (Optional[bool], optional): whether to use masked headers. Defaults to True.</span>
 <span class="sd">        timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.</span>
 <span class="sd">        params (Optional[dict], optional): query parameters for the request. Defaults to None.</span>
+<span class="sd">        select (Optional[List[str]], optional): OData select clause columns. Defaults to None.</span>
+<span class="sd">        filters (Optional[str | FilterExpression], optional): OData filter clause. Defaults to None.</span>
 <span class="sd">        max_workers (int, optional): maximum number of threads for parallel requests. Defaults to 1 (sequential).</span>
 <span class="sd">        inject_path_params (bool, optional): when True, merge the resolved path parameters</span>
 <span class="sd">            into each response dict. Useful when the API does not echo back identifiers</span>
@@ -1570,6 +1617,7 @@ into each response dict. Useful when the API does not echo back identifiers
 <span class="sd">    Returns:</span>
 <span class="sd">        List[Dict]: the collection of API responses for each substituted endpoint</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
     <span class="n">is_valid</span><span class="p">,</span> <span class="n">missing_params</span> <span class="o">=</span> <span class="n">validate_path_parameters</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required path parameters: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_params</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1578,12 +1626,9 @@ into each response dict. Useful when the API does not echo back identifiers
     <span class="k">if</span> <span class="ow">not</span> <span class="n">urls</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="c1"># Establish the call session</span>
-    <span class="n">get_headers_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_masked_headers</span> <span class="k">if</span> <span class="n">masked</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unmasked_headers</span>
-
-    <span class="n">call_session</span> <span class="o">=</span> <span class="n">ApiSession</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="n">get_headers_fn</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
-        <span class="n">call_session</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">request_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="n">query_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_query_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
+    <span class="n">call_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_call_session</span><span class="p">(</span><span class="n">masked</span><span class="o">=</span><span class="n">masked</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query_params</span><span class="p">)</span>
 
     <span class="c1"># Ensure a valid token once before all requests to avoid race conditions</span>
     <span class="c1"># with concurrent threads each trying to refresh the token simultaneously.</span>
@@ -1591,13 +1636,8 @@ into each response dict. Useful when the API does not echo back identifiers
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">full_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="n">url</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">call_session</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">full_url</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RequestMethod</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">data</span>
-        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse JSON response: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">raise</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">call_session</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">full_url</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">request_method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_json_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_fetch</span><span class="p">,</span> <span class="n">urls</span><span class="p">))</span>
