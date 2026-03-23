@@ -193,6 +193,59 @@ class AdpApiClient:
             odata_str = odata_str[1:-1]
         return odata_str
 
+    def _resolve_method(self, method: str | RequestMethod) -> RequestMethod:
+        """Normalize method input into a RequestMethod enum value."""
+        if isinstance(method, RequestMethod):
+            return method
+
+        try:
+            return RequestMethod(method.upper())
+        except ValueError as e:
+            raise ValueError(f"Unsupported request method: {method}") from e
+
+    def _build_query_params(
+        self,
+        params: dict[str, Any] | None = None,
+        select: list[str] | None = None,
+        filters: str | FilterExpression | None = None,
+    ) -> dict[str, Any]:
+        """Build query params, including optional OData select/filter clauses."""
+        query_params: dict[str, Any] = dict(params) if params else {}
+
+        if select:
+            select_param = ",".join(select)
+            logging.debug(f"Restricting OData Selection to {select_param}")
+            query_params["$select"] = select_param
+
+        filter_param = self._handle_filters(filters)
+        if filter_param:
+            logging.debug(f"Filtering Results according to OData query: {filter_param}")
+            query_params["$filter"] = filter_param
+
+        return query_params
+
+    def _build_call_session(
+        self,
+        masked: bool,
+        timeout: int,
+        params: dict[str, Any] | None = None,
+    ) -> ApiSession:
+        """Create a configured ApiSession for endpoint calls."""
+        get_headers_fn = self.get_masked_headers if masked else self.get_unmasked_headers
+        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
+        if params:
+            call_session.set_params(params)
+        return call_session
+
+    @staticmethod
+    def _parse_json_response(response: requests.Response) -> dict:
+        """Parse JSON response body and surface decode errors with context."""
+        try:
+            return response.json()
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON response: {e}")
+            raise
+
     def _clean_endpoint(self, endpoint: str) -> str:
         starts_with_base = endpoint.startswith(self.base_url)
         starts_with_path = endpoint.startswith("/")
@@ -219,6 +272,7 @@ class AdpApiClient:
         timeout: int = DEFAULT_TIMEOUT,
         page_size: int = 100,
         max_requests: int | None = None,
+        method: str = "GET",
     ) -> list[dict]:
         """Call any Registered ADP Endpoint
 
@@ -231,6 +285,7 @@ class AdpApiClient:
             timeout (int, optional): Time to wait on. Defaults to 30.
             page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.
             max_requests (Optional[int], optional): Maximum number of requests to make (for quick testing). Defaults to None.
+            method (str, optional): HTTP method for the request. Defaults to 'GET'.
 
         Raises:
             ValueError: When given an endpoint not following the call convention
@@ -247,43 +302,40 @@ class AdpApiClient:
         # Output/Request Initialization
         endpoint = self._clean_endpoint(endpoint)
         url = self.base_url + endpoint
-        filter_param = self._handle_filters(filters)
-        # Populate here instead of mutable default arguments
-        if select is None:
-            select = []
-        select_param = ",".join(select)
+        request_method = self._resolve_method(method)
+
+        query_params = self._build_query_params(select=select, filters=filters)
         output = []
         skip = 0
 
-        get_headers_fn = self.get_masked_headers if masked else self.get_unmasked_headers
+        call_session = self._build_call_session(masked=masked, timeout=timeout)
 
-        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
-
-        params: dict[str, Any] = {"$top": page_size}
-        if select_param:
-            logging.debug(f"Restricting OData Selection to {select_param}")
-            params["$select"] = select_param
-        if filter_param:
-            logging.debug(f"Filtering Results according to OData query: {filter_param}")
-            params["$filter"] = filter_param
+        if request_method == RequestMethod.GET:
+            query_params["$top"] = page_size
+        elif max_requests is not None and max_requests > 1:
+            logger.warning(
+                "max_requests > 1 was provided for a non-GET request; only one request will be made."
+            )
 
         while True:
-            params["$skip"] = skip
+            params = dict(query_params)
+            if request_method == RequestMethod.GET:
+                params["$skip"] = skip
+
             call_session.set_params(params)
             self._ensure_valid_token(timeout)
-            response = call_session.get(url)
+            response = call_session._request(url, method=request_method)
 
-            if response.status_code == 204:
+            if request_method == RequestMethod.GET and response.status_code == 204:
                 logger.debug("End of pagination reached (204 No Content)")
                 break
 
-            try:
-                data = response.json()
-                output.append(data)
+            # json.JSONDecodeError handling is centralized in _parse_json_response.
+            data = self._parse_json_response(response)
+            output.append(data)
 
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON response: {e}")
-                raise
+            if request_method != RequestMethod.GET:
+                break
 
             if max_requests is not None and len(output) >= max_requests:
                 logger.debug(f"Max Requests reached: {max_requests}")
@@ -299,6 +351,8 @@ class AdpApiClient:
         masked: bool = True,
         timeout: int = DEFAULT_TIMEOUT,
         params: dict | None = None,
+        select: list[str] | None = None,
+        filters: str | FilterExpression | None = None,
         max_workers: int = 1,
         inject_path_params: bool = False,
         **kwargs: Any,
@@ -311,6 +365,8 @@ class AdpApiClient:
             masked (Optional[bool], optional): whether to use masked headers. Defaults to True.
             timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.
             params (Optional[dict], optional): query parameters for the request. Defaults to None.
+            select (Optional[List[str]], optional): OData select clause columns. Defaults to None.
+            filters (Optional[str | FilterExpression], optional): OData filter clause. Defaults to None.
             max_workers (int, optional): maximum number of threads for parallel requests. Defaults to 1 (sequential).
             inject_path_params (bool, optional): when True, merge the resolved path parameters
                 into each response dict. Useful when the API does not echo back identifiers
@@ -322,6 +378,7 @@ class AdpApiClient:
         Returns:
             List[Dict]: the collection of API responses for each substituted endpoint
         """
+        endpoint = self._clean_endpoint(endpoint)
         is_valid, missing_params = validate_path_parameters(endpoint, kwargs)
         if not is_valid:
             raise ValueError(f"Missing required path parameters: {', '.join(missing_params)}")
@@ -330,12 +387,9 @@ class AdpApiClient:
         if not urls:
             return []
 
-        # Establish the call session
-        get_headers_fn = self.get_masked_headers if masked else self.get_unmasked_headers
-
-        call_session = ApiSession(self.session, self.cert, get_headers_fn, timeout=timeout)
-        if params:
-            call_session.set_params(params)
+        request_method = self._resolve_method(method)
+        query_params = self._build_query_params(params=params, select=select, filters=filters)
+        call_session = self._build_call_session(masked=masked, timeout=timeout, params=query_params)
 
         # Ensure a valid token once before all requests to avoid race conditions
         # with concurrent threads each trying to refresh the token simultaneously.
@@ -343,13 +397,8 @@ class AdpApiClient:
 
         def _fetch(url: str) -> dict:
             full_url = self.base_url + url
-            response = call_session._request(url=full_url, method=RequestMethod(method))
-            try:
-                data = response.json()
-                return data
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON response: {e}")
-                raise
+            response = call_session._request(url=full_url, method=request_method)
+            return self._parse_json_response(response)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             output = list(executor.map(_fetch, urls))
