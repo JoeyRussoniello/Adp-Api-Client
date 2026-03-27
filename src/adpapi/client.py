@@ -69,7 +69,7 @@ class AdpCredentials:
 
 
 class AdpApiClient:
-    def __init__(self, credentials: AdpCredentials):
+    def __init__(self, credentials: AdpCredentials, retry_on_statuses: list | None = None):
         if credentials.cert_path is None or credentials.key_path is None:
             raise ValueError("Certificate path and key path must not be None")
         if not os.path.exists(credentials.cert_path) or not os.path.exists(credentials.key_path):
@@ -82,7 +82,7 @@ class AdpApiClient:
         self.key_path = credentials.key_path
         self.cert = (self.cert_path, self.key_path)
         self.session = requests.Session()
-        self._setup_retry_strategy()
+        self._setup_retry_strategy(status_forcelist = retry_on_statuses)
 
         # Token expiration tracking
         self.token: str | None = None
@@ -100,12 +100,15 @@ class AdpApiClient:
     def base_url(self) -> str:
         return "https://api.adp.com"
 
-    def _setup_retry_strategy(self, retries: int = 3, backoff_factor: float = 0.5):
+    def _setup_retry_strategy(self, retries: int = 3, backoff_factor: float = 0.5, status_forcelist: list | None = None):
         """Configure retry strategy with exponential backoff for HTTP requests."""
+        if status_forcelist is None:
+            # Default sensible foreclist
+            status_forcelist = [429, 500, 502, 503, 504]
         retry_strategy = Retry(
             total=retries,
             backoff_factor=backoff_factor,
-            status_forcelist=[429, 500, 502, 503, 504],
+            status_forcelist=status_forcelist,
             allowed_methods=["GET", "POST"],
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
