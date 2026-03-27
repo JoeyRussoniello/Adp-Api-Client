@@ -87,19 +87,22 @@ class ApiSession:
             kwargs["json"] = self.data
         response = request_fn(url, **kwargs)
 
-        try:
-            response.raise_for_status()
+        if not response.ok:
+            #* Safely extract body, ADP sometimes returns empty bodies on errors
+            try:
+                body = response.json()
+                body_str = json.dumps(body, indent=2)
+            except json.JSONDecodeError:
+                body_str = response.text.strip() or "<empty response body>"
 
-        except requests.RequestException as e:
-            headers = dict(response.headers)
-            data = response.json()
             logger.error(
-                f"Request failed for {method} request to url: {url} with params {self.params}\n"
-                f"Response Headers: {json.dumps(headers, indent=2)}\n"
-                f"Response Body: {json.dumps(data, indent=2)}\n"
-                f"Error:\n{e}"
+                f"HTTP {response.status_code} on {method} {url}\n"
+                f"Params: {self.params}\n"
+                f"Response Headers: {json.dumps(dict(response.headers), indent=2)}\n"
+                f"Response Body: {body_str}"
             )
-            raise
+            # Raise after logging so the real status code and body are always visible
+            response.raise_for_status()
 
         return response
 
