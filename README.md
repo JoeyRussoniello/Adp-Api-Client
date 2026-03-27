@@ -33,7 +33,7 @@ KEY_PATH=adp.key
 import os
 from dotenv import load_dotenv
 
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials, FilterExpression
 from adpapi.logger import configure_logging
 
 # Optional helper: Configure logger with file handlers and stream handling
@@ -62,12 +62,13 @@ with AdpApiClient(credentials) as api:
         max_requests=1,    # increase/remove for full exports
     )
 
-    # Or call rest endpoints with url pagination
+    # Or call rest endpoints with path parameters
     some_workers = api.call_rest_endpoint(
         endpoint = '/hr/v1/workers/{aoid}',
         aoid = ['0000000001', '0000000002', '0000000003', '0000000004'],
+        select = cols,
         masked = False,
-        inject_params = True # Inject AOID into each response dict for downstream processing
+        inject_path_params = True # Inject AOID into each response dict for downstream processing
     )
 ```
 
