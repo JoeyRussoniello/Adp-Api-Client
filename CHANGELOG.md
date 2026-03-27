@@ -2,6 +2,26 @@
 
 All notable changes to the `adpapi` package are documented in this file.
 
+## [1.5.2] - 2026-03-27
+
+### Added
+
+- `select` and `odata_filter` parameters to `call_rest_endpoint` for filtering and column selection
+- Configurable retry status codes via `retry_on_statuses` parameter on client initialization
+- Package-level exports for `AdpApiClient`, `AdpCredentials`, and `FilterExpression` (enables `from adpapi import *`)
+
+### Fixed
+
+- Logger configuration now only affects the `adpapi` package logger instead of the root logger
+- Error handling for non-JSON decodeable response bodies (e.g., empty responses or plain text errors)
+- Input validation: endpoint URLs are now stripped of whitespace before processing
+
+### Improved
+
+- Error messages now include HTTP status codes, request parameters, headers, and response bodies for easier debugging
+- ValueError message for invalid endpoints now specifies the correct format requirements
+- Session failure logging provides complete context including request details and actual response content
+
 ## [1.5.1] - 2026-02-26
 
 ### Fixed
