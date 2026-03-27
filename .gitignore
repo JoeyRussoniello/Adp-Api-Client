@@ -155,3 +155,6 @@ tmp/
 # OS
 Thumbs.db
 .DS_Store
+
+# Package testing files
+temp.py
