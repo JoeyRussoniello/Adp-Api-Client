@@ -11,7 +11,7 @@ To use the `AdpApiClient` you first must configure your API credentials. These c
 The main entry point for interacting with the ADP API. Using a context manager is **recommended** so the HTTP session is always closed cleanly:
 
 ```python
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials
 
 credentials = AdpCredentials(
     client_id, client_secret, key_path, cert_path
@@ -21,10 +21,27 @@ with AdpApiClient(credentials) as api:
     api.call_rest_endpoint(...)
 ```
 
+### Configuring Retry Behavior
+
+Customize which HTTP status codes trigger automatic retries:
+
+```python
+# Default: retries on [429, 500, 502, 503, 504]
+client = AdpApiClient(credentials)
+
+# Custom retry status codes
+client = AdpApiClient(credentials, retry_on_statuses=[429, 503])
+
+# Disable retries
+client = AdpApiClient(credentials, retry_on_statuses=[])
+```
+
 The `AdpApiClient` surfaces two main entry points:
 
 - `.call_endpoint()` — for paginated OData queries (lists, searches)
 - `.call_rest_endpoint()` — for direct resource lookups by ID, with path parameter substitution
+
+Both methods support `select` and `filters` parameters for OData column selection and filtering.
 
 ::: adpapi.client.AdpApiClient.call_endpoint
 
@@ -35,7 +52,7 @@ The `AdpApiClient` surfaces two main entry points:
 OData filter expressions for querying. Use `FilterExpression.field()` as the primary entry point:
 
 ```python
-from adpapi.odata_filters import FilterExpression
+from adpapi import FilterExpression
 
 # Recommended: use FilterExpression.field()
 filter = FilterExpression.field('fieldName').eq('targetValue')
@@ -44,6 +61,8 @@ filter = FilterExpression.field('fieldName').eq('targetValue')
 from adpapi.odata_filters import Field
 field = Field('fieldName')
 ```
+
+Filters can be used with both `call_endpoint` and `call_rest_endpoint`.
 
 See full details on supported OData operations:
 ::: adpapi.odata_filters.Field

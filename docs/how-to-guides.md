@@ -6,7 +6,7 @@ The recommended approach is to load credentials from environment variables (see 
 
 ```python
 from dotenv import load_dotenv
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
@@ -27,10 +27,10 @@ client = AdpApiClient(credentials)
 
 ## Filter Results with OData
 
-Use `FilterExpression.field()` to build type-safe OData filters to pass to `call_endpoint`:
+Use `FilterExpression.field()` to build type-safe OData filters to pass to `call_endpoint` or `call_rest_endpoint`:
 
 ```python
-from adpapi.odata_filters import FilterExpression
+from adpapi import FilterExpression
 
 # Simple equality filter
 filter_expr = FilterExpression.field('workers/workAssignments/assignmentStatus/statusCode/codeValue').eq('Active')
@@ -89,6 +89,37 @@ results = client.call_rest_endpoint(
     masked=False,
     params={"$top": 10},
     associateOID="G3349PRDL000001"
+)
+```
+
+### Filter and Select with REST Endpoints
+
+You can use `select` and `filters` with `call_rest_endpoint`, just like with `call_endpoint`:
+
+```python
+from adpapi import FilterExpression
+
+# Select specific columns
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID=["G3349PRDL000001", "G3349PRDL000002"],
+    select=["workers/person/legalName", "workers/workAssignments/assignmentStatus"]
+)
+
+# Apply filters
+active_filter = FilterExpression.field("workers/workAssignments/assignmentStatus/statusCode/codeValue").eq("Active")
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID=["G3349PRDL000001", "G3349PRDL000002"],
+    filters=active_filter
+)
+
+# Combine both
+results = client.call_rest_endpoint(
+    endpoint="/hr/v2/workers/{associateOID}",
+    associateOID=["G3349PRDL000001", "G3349PRDL000002"],
+    select=["workers/person/legalName", "workers/associateOID"],
+    filters=active_filter
 )
 ```
 
@@ -163,6 +194,28 @@ Enable logging to see token refresh events, pagination progress, and request err
 from adpapi.logger import configure_logging
 
 configure_logging()  # logs to console and a rotating file by default
+```
+
+## Configure Retry Behavior
+
+Customize which HTTP status codes trigger automatic retries:
+
+```python
+from adpapi import AdpApiClient, AdpCredentials
+
+credentials = AdpCredentials.from_env()
+
+# Default retries on [429, 500, 502, 503, 504]
+client = AdpApiClient(credentials)
+
+# Custom retry status codes
+client = AdpApiClient(
+    credentials,
+    retry_on_statuses=[429, 503]  # Only retry on rate limits and service unavailable
+)
+
+# Disable retries entirely
+client = AdpApiClient(credentials, retry_on_statuses=[])
 ```
 
 ## Manage Sessions

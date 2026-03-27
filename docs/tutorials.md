@@ -22,7 +22,7 @@ KEY_PATH=adp.key            # optional, defaults to adp.key
 
 ```python
 from dotenv import load_dotenv
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
@@ -63,7 +63,8 @@ When you already have a specific resource ID, use `call_rest_endpoint` instead:
 with AdpApiClient(credentials) as client:
     results = client.call_rest_endpoint(
         endpoint="/hr/v2/workers/{associateOID}",
-        associateOID="G3349PRDL000001"
+        associateOID="G3349PRDL000001",
+        select=["workers/person/legalName"]
     )
 ```
 
