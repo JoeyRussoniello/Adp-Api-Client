@@ -264,7 +264,7 @@ class AdpApiClient:
                 f"(Ex: Prefer {endpoint} over {self.base_url}{endpoint})."
             )
 
-        return endpoint
+        return endpoint.strip()
 
     def call_endpoint(
         self,
