@@ -302,6 +302,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Call a REST Endpoint with Path Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filter-and-select-with-rest-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter and Select with REST Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -348,6 +365,17 @@
     <span class="md-ellipsis">
       
         Configure Logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-retry-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure Retry Behavior
       
     </span>
   </a>
@@ -484,6 +512,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Call a REST Endpoint with Path Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filter-and-select-with-rest-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter and Select with REST Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -537,6 +582,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#configure-retry-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure Retry Behavior
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#manage-sessions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -568,7 +624,7 @@
 <h2 id="authenticate-with-the-api">Authenticate with the API</h2>
 <p>The recommended approach is to load credentials from environment variables (see <a href="../tutorials/">Getting Started</a>):</p>
 <pre><code class="language-python">from dotenv import load_dotenv
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
@@ -584,8 +640,8 @@ client = AdpApiClient(credentials)
 client = AdpApiClient(credentials)
 </code></pre>
 <h2 id="filter-results-with-odata">Filter Results with OData</h2>
-<p>Use <code>FilterExpression.field()</code> to build type-safe OData filters to pass to <code>call_endpoint</code>:</p>
-<pre><code class="language-python">from adpapi.odata_filters import FilterExpression
+<p>Use <code>FilterExpression.field()</code> to build type-safe OData filters to pass to <code>call_endpoint</code> or <code>call_rest_endpoint</code>:</p>
+<pre><code class="language-python">from adpapi import FilterExpression
 
 # Simple equality filter
 filter_expr = FilterExpression.field('workers/workAssignments/assignmentStatus/statusCode/codeValue').eq('Active')
@@ -631,6 +687,33 @@ results = client.call_rest_endpoint(
     masked=False,
     params={&quot;$top&quot;: 10},
     associateOID=&quot;G3349PRDL000001&quot;
+)
+</code></pre>
+<h3 id="filter-and-select-with-rest-endpoints">Filter and Select with REST Endpoints</h3>
+<p>You can use <code>select</code> and <code>filters</code> with <code>call_rest_endpoint</code>, just like with <code>call_endpoint</code>:</p>
+<pre><code class="language-python">from adpapi import FilterExpression
+
+# Select specific columns
+results = client.call_rest_endpoint(
+    endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+    associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;],
+    select=[&quot;workers/person/legalName&quot;, &quot;workers/workAssignments/assignmentStatus&quot;]
+)
+
+# Apply filters
+active_filter = FilterExpression.field(&quot;workers/workAssignments/assignmentStatus/statusCode/codeValue&quot;).eq(&quot;Active&quot;)
+results = client.call_rest_endpoint(
+    endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+    associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;],
+    filters=active_filter
+)
+
+# Combine both
+results = client.call_rest_endpoint(
+    endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
+    associateOID=[&quot;G3349PRDL000001&quot;, &quot;G3349PRDL000002&quot;],
+    select=[&quot;workers/person/legalName&quot;, &quot;workers/associateOID&quot;],
+    filters=active_filter
 )
 </code></pre>
 <h2 id="speed-up-batch-requests-with-parallel-fetching">Speed Up Batch Requests with Parallel Fetching</h2>
@@ -704,6 +787,24 @@ for worker in results:
 <pre><code class="language-python">from adpapi.logger import configure_logging
 
 configure_logging()  # logs to console and a rotating file by default
+</code></pre>
+<h2 id="configure-retry-behavior">Configure Retry Behavior</h2>
+<p>Customize which HTTP status codes trigger automatic retries:</p>
+<pre><code class="language-python">from adpapi import AdpApiClient, AdpCredentials
+
+credentials = AdpCredentials.from_env()
+
+# Default retries on [429, 500, 502, 503, 504]
+client = AdpApiClient(credentials)
+
+# Custom retry status codes
+client = AdpApiClient(
+    credentials,
+    retry_on_statuses=[429, 503]  # Only retry on rate limits and service unavailable
+)
+
+# Disable retries entirely
+client = AdpApiClient(credentials, retry_on_statuses=[])
 </code></pre>
 <h2 id="manage-sessions">Manage Sessions</h2>
 <p><code>ApiSession</code> is used internally by <code>AdpApiClient</code> — you don't need to interact with it directly. It handles connection pooling, certificate attachment, and header generation on every request. See the <a href="../explanation/">Concepts page</a> for more detail.</p>

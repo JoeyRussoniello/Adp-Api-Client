@@ -588,7 +588,7 @@ CERT_PATH=certificate.pem   # optional, defaults to certificate.pem
 KEY_PATH=adp.key            # optional, defaults to adp.key
 </code></pre>
 <pre><code class="language-python">from dotenv import load_dotenv
-from adpapi.client import AdpApiClient, AdpCredentials
+from adpapi import AdpApiClient, AdpCredentials
 
 load_dotenv()
 credentials = AdpCredentials.from_env()
@@ -617,7 +617,8 @@ print(results)
 <pre><code class="language-python">with AdpApiClient(credentials) as client:
     results = client.call_rest_endpoint(
         endpoint=&quot;/hr/v2/workers/{associateOID}&quot;,
-        associateOID=&quot;G3349PRDL000001&quot;
+        associateOID=&quot;G3349PRDL000001&quot;,
+        select=[&quot;workers/person/legalName&quot;]
     )
 </code></pre>
 <p>You can also pass a list of IDs to fetch multiple workers in a batch:</p>
