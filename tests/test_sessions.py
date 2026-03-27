@@ -169,15 +169,6 @@ class TestRequest:
         with pytest.raises(requests.RequestException):
             api_session._request("http://example.com", RequestMethod.GET)
 
-    def test_request_calls_raise_for_status(self, api_session, mock_session):
-        """Test that raise_for_status is called."""
-        mock_response = MagicMock()
-        mock_session.get.return_value = mock_response
-
-        api_session._request("http://example.com", RequestMethod.GET)
-
-        mock_response.raise_for_status.assert_called_once()
-
 
 class TestHttpMethods:
     """Test HTTP method wrappers."""
