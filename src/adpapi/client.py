@@ -38,6 +38,26 @@ KEY_DEFAULT = "adp.key"
 
 @dataclass
 class AdpCredentials:
+    """Container for ADP API authentication credentials.
+
+    Holds the OAuth 2.0 client credentials and paths to the mTLS certificate
+    and private key required for ADP API authentication.
+
+    Attributes:
+        client_id: OAuth 2.0 client ID from ADP
+        client_secret: OAuth 2.0 client secret from ADP
+        cert_path: Path to the mTLS certificate file (.pem). Defaults to 'certificate.pem'
+        key_path: Path to the private key file. Defaults to 'adp.key'
+
+    Example:
+        >>> credentials = AdpCredentials(
+        ...     client_id="my_client_id",
+        ...     client_secret="my_secret",
+        ...     cert_path="/path/to/cert.pem",
+        ...     key_path="/path/to/key.key"
+        ... )
+    """
+
     client_id: str
     client_secret: str
     cert_path: str | None = CERT_DEFAULT
@@ -45,6 +65,25 @@ class AdpCredentials:
 
     @staticmethod
     def from_env() -> "AdpCredentials":
+        """Load credentials from environment variables.
+
+        Reads authentication credentials from the following environment variables:
+        - CLIENT_ID (required): OAuth 2.0 client ID
+        - CLIENT_SECRET (required): OAuth 2.0 client secret
+        - CERT_PATH (optional): Path to mTLS certificate, defaults to 'certificate.pem'
+        - KEY_PATH (optional): Path to private key, defaults to 'adp.key'
+
+        Returns:
+            AdpCredentials instance populated from environment variables
+
+        Raises:
+            ValueError: If CLIENT_ID or CLIENT_SECRET are not set
+
+        Example:
+            >>> from dotenv import load_dotenv
+            >>> load_dotenv()
+            >>> credentials = AdpCredentials.from_env()
+        """
         client_id = os.getenv("CLIENT_ID")
         client_secret = os.getenv("CLIENT_SECRET")
 
@@ -69,7 +108,47 @@ class AdpCredentials:
 
 
 class AdpApiClient:
+    """Client for interacting with the ADP Workforce Now API.
+
+    Handles OAuth 2.0 authentication with certificate-based mutual TLS,
+    automatic token refresh, and provides methods for calling both paginated
+    OData endpoints and direct REST endpoints with path parameters.
+
+    The client is designed to be used as a context manager to ensure proper
+    cleanup of HTTP sessions.
+
+    Example:
+        >>> from adpapi import AdpApiClient, AdpCredentials
+        >>> credentials = AdpCredentials.from_env()
+        >>> with AdpApiClient(credentials) as client:
+        ...     workers = client.call_endpoint("/hr/v2/workers")
+    """
+
     def __init__(self, credentials: AdpCredentials, retry_on_statuses: list | None = None):
+        """Initialize the ADP API client.
+
+        Args:
+            credentials: AdpCredentials object containing client_id, client_secret,
+                and paths to certificate and key files
+            retry_on_statuses: List of HTTP status codes that should trigger automatic
+                retries with exponential backoff. If None, defaults to [429, 500, 502, 503, 504].
+                Pass an empty list [] to disable retries entirely.
+
+        Raises:
+            ValueError: If certificate path or key path is None
+            FileNotFoundError: If certificate or key file does not exist at the specified path
+
+        Example:
+            >>> credentials = AdpCredentials.from_env()
+            >>> # Default retry behavior
+            >>> client = AdpApiClient(credentials)
+            >>>
+            >>> # Custom retry statuses
+            >>> client = AdpApiClient(credentials, retry_on_statuses=[429, 503])
+            >>>
+            >>> # Disable retries
+            >>> client = AdpApiClient(credentials, retry_on_statuses=[])
+        """
         if credentials.cert_path is None or credentials.key_path is None:
             raise ValueError("Certificate path and key path must not be None")
         if not os.path.exists(credentials.cert_path) or not os.path.exists(credentials.key_path):
@@ -82,7 +161,7 @@ class AdpApiClient:
         self.key_path = credentials.key_path
         self.cert = (self.cert_path, self.key_path)
         self.session = requests.Session()
-        self._setup_retry_strategy(status_forcelist = retry_on_statuses)
+        self._setup_retry_strategy(status_forcelist=retry_on_statuses)
 
         # Token expiration tracking
         self.token: str | None = None
@@ -100,7 +179,9 @@ class AdpApiClient:
     def base_url(self) -> str:
         return "https://api.adp.com"
 
-    def _setup_retry_strategy(self, retries: int = 3, backoff_factor: float = 0.5, status_forcelist: list | None = None):
+    def _setup_retry_strategy(
+        self, retries: int = 3, backoff_factor: float = 0.5, status_forcelist: list | None = None
+    ):
         """Configure retry strategy with exponential backoff for HTTP requests."""
         if status_forcelist is None:
             # Default sensible foreclist
@@ -167,9 +248,24 @@ class AdpApiClient:
         return headers
 
     def get_masked_headers(self) -> dict[str, str]:
+        """Get HTTP headers with masked=true (hides PII).
+
+        Returns:
+            Dictionary of HTTP headers with Authorization and Accept headers,
+            where Accept is set to request masked data.
+        """
         return self._get_headers(True)
 
     def get_unmasked_headers(self) -> dict[str, str]:
+        """Get HTTP headers with masked=false (shows PII if permitted).
+
+        Returns:
+            Dictionary of HTTP headers with Authorization and Accept headers,
+            where Accept is set to request unmasked data.
+
+        Note:
+            Access to unmasked data is subject to tenant permissions.
+        """
         return self._get_headers(False)
 
     def _handle_filters(self, filters: str | FilterExpression | None = None) -> str:
@@ -255,7 +351,9 @@ class AdpApiClient:
 
         if not (starts_with_base or starts_with_path):
             logger.error(f"Incorrect Endpoint Received {endpoint}")
-            raise ValueError(f"Incorrect Endpoint Received: {endpoint}. Endpoints must either start with `/` or with {self.base_url}.")
+            raise ValueError(
+                f"Incorrect Endpoint Received: {endpoint}. Endpoints must either start with `/` or with {self.base_url}."
+            )
 
         if starts_with_base:
             endpoint = endpoint.split(self.base_url)[1]
@@ -277,24 +375,55 @@ class AdpApiClient:
         max_requests: int | None = None,
         method: str = "GET",
     ) -> list[dict]:
-        """Call any Registered ADP Endpoint
+        """Call a paginated OData endpoint with automatic pagination handling.
+
+        Use this method for list/search operations that return multiple records.
+        The client automatically handles pagination by incrementing $skip until
+        the API returns HTTP 204 (No Content) or max_requests is reached.
 
         Args:
-            endpoint (str): API Endpoint or qualified URL to call
-            select (List[str]): Table Columns to pull
-            masked (bool, optional): Mask Sensitive Columns Containing Personally Identifiable Information. Defaults to True.
-            filters (str | FilterExpression, optional): OData Filter Expression. Strings will be passed directly,
-                or OData strings can be automatically created from `adpapi.odata_filters.FilterExpression` objects
-            timeout (int, optional): Time to wait on. Defaults to 30.
-            page_size (int, optional): Amount of records to pull per API call (max 100). Defaults to 100.
-            max_requests (Optional[int], optional): Maximum number of requests to make (for quick testing). Defaults to None.
-            method (str, optional): HTTP method for the request. Defaults to 'GET'.
-
-        Raises:
-            ValueError: When given an endpoint not following the call convention
+            endpoint: API endpoint path (e.g., '/hr/v2/workers'). Can optionally include
+                the full URL, but path-only is preferred.
+            select: List of OData columns to retrieve. Uses dot notation in Python
+                (e.g., 'workers/person/legalName') which is converted to OData's
+                forward-slash notation. If None, all columns are returned.
+            filters: OData filter expression as a string or FilterExpression object.
+                Use FilterExpression for type-safe filter building.
+            masked: Whether to request masked data (hides PII). Set to False to request
+                unmasked data if your tenant permissions allow it. Defaults to True.
+            timeout: Request timeout in seconds. Defaults to 30.
+            page_size: Number of records per request (max 100). Defaults to 100.
+            max_requests: Maximum number of paginated requests to make. Useful for
+                testing or limiting data pulls. If None, fetches all available records.
+            method: HTTP method to use. Defaults to 'GET'. Non-GET methods will only
+                make a single request (no pagination).
 
         Returns:
-            List[Dict]: The collection of API responses
+            List of dictionaries, where each dictionary is a response from the API.
+            For paginated GET requests, this will contain one dict per page.
+
+        Raises:
+            ValueError: If endpoint format is invalid (must start with '/' or base URL)
+            requests.RequestException: If the HTTP request fails
+            json.JSONDecodeError: If the response body is not valid JSON
+
+        Example:
+            >>> # Basic usage
+            >>> workers = client.call_endpoint("/hr/v2/workers")
+            >>>
+            >>> # With column selection
+            >>> workers = client.call_endpoint(
+            ...     "/hr/v2/workers",
+            ...     select=["workers/person/legalName", "workers/associateOID"]
+            ... )
+            >>>
+            >>> # With filtering
+            >>> from adpapi import FilterExpression
+            >>> active = FilterExpression.field("workers/status").eq("Active")
+            >>> workers = client.call_endpoint("/hr/v2/workers", filters=active)
+            >>>
+            >>> # Limited fetch for testing
+            >>> workers = client.call_endpoint("/hr/v2/workers", max_requests=2)
         """
 
         # Request Cleanup and Validation Logic
@@ -360,26 +489,77 @@ class AdpApiClient:
         inject_path_params: bool = False,
         **kwargs: Any,
     ) -> list[dict]:
-        """Call a RestAPI Endpoint
+        """Call a REST endpoint with path parameter substitution and optional parallelization.
+
+        Use this method for direct resource lookups when you already know the resource
+        identifier(s). Supports batch fetching multiple resources and parallel execution
+        for improved throughput.
 
         Args:
-            endpoint (str): the endpoint path template (e.g. '/hr/workers/{workerId}')
-            method (Optional[str], optional): the HTTP method to use for the request. Defaults to 'GET'.
-            masked (Optional[bool], optional): whether to use masked headers. Defaults to True.
-            timeout (Optional[int], optional): the request timeout in seconds. Defaults to DEFAULT_TIMEOUT.
-            params (Optional[dict], optional): query parameters for the request. Defaults to None.
-            select (Optional[List[str]], optional): OData select clause columns. Defaults to None.
-            filters (Optional[str | FilterExpression], optional): OData filter clause. Defaults to None.
-            max_workers (int, optional): maximum number of threads for parallel requests. Defaults to 1 (sequential).
-            inject_path_params (bool, optional): when True, merge the resolved path parameters
-                into each response dict. Useful when the API does not echo back identifiers
-                (e.g. AOIDs) in the response body. Defaults to False.
-            **kwargs: path parameters to substitute into the endpoint template (e.g workerId=['123', '456']) - can be single values or lists of values for batch requests
-        Raises:
-            ValueError: if required path parameters are missing or if endpoint format is incorrect
+            endpoint: API endpoint path template with placeholders in curly braces
+                (e.g., '/hr/v2/workers/{associateOID}').
+            method: HTTP method to use. Defaults to 'GET'.
+            masked: Whether to request masked data (hides PII). Set to False to request
+                unmasked data if your tenant permissions allow it. Defaults to True.
+            timeout: Request timeout in seconds. Defaults to 30.
+            params: Additional query parameters to include in the request.
+            select: List of OData columns to retrieve. Works the same as in call_endpoint().
+            filters: OData filter expression as a string or FilterExpression object.
+            max_workers: Number of threads for parallel requests. Use 1 for sequential
+                (default). Recommended range is 5-10 for parallel execution.
+            inject_path_params: When True, the resolved path parameters are merged into
+                each response dictionary. Useful when the API response doesn't include
+                the requested identifier (e.g., associate OIDs). Defaults to False.
+            **kwargs: Path parameters to substitute into the endpoint template.
+                - Single values: workerId='123' → '/hr/v2/workers/123'
+                - Lists: workerId=['123', '456'] → multiple requests for each ID
+                - Multiple params: workerId='123', jobId='J1' → '/hr/v2/workers/123/jobs/J1'
 
         Returns:
-            List[Dict]: the collection of API responses for each substituted endpoint
+            List of dictionaries, one for each resolved endpoint URL. For batch requests
+            with lists, returns one response per list item.
+
+        Raises:
+            ValueError: If required path parameters are missing from kwargs, or if endpoint
+                format is invalid.
+            requests.RequestException: If the HTTP request fails.
+            json.JSONDecodeError: If the response body is not valid JSON.
+
+        Example:
+            >>> # Single resource fetch
+            >>> worker = client.call_rest_endpoint(
+            ...     "/hr/v2/workers/{associateOID}",
+            ...     associateOID="G3349PRDL000001"
+            ... )
+            >>>
+            >>> # Batch fetch (sequential)
+            >>> workers = client.call_rest_endpoint(
+            ...     "/hr/v2/workers/{associateOID}",
+            ...     associateOID=["G3349PRDL000001", "G3349PRDL000002"]
+            ... )
+            >>>
+            >>> # Parallel batch fetch (5-10x faster)
+            >>> workers = client.call_rest_endpoint(
+            ...     "/hr/v2/workers/{associateOID}",
+            ...     max_workers=10,
+            ...     associateOID=list_of_50_ids
+            ... )
+            >>>
+            >>> # With column selection and ID injection
+            >>> workers = client.call_rest_endpoint(
+            ...     "/hr/v2/workers/{associateOID}",
+            ...     select=["workers/person/legalName"],
+            ...     inject_path_params=True,
+            ...     associateOID=["G3349PRDL000001", "G3349PRDL000002"]
+            ... )
+            >>> # Each response now includes: {"associateOID": "G3349PRDL000001", ...}
+            >>>
+            >>> # Multiple path parameters
+            >>> job = client.call_rest_endpoint(
+            ...     "/hr/v2/workers/{associateOID}/jobs/{jobId}",
+            ...     associateOID="G3349PRDL000001",
+            ...     jobId="J42"
+            ... )
         """
         endpoint = self._clean_endpoint(endpoint)
         is_valid, missing_params = validate_path_parameters(endpoint, kwargs)
@@ -414,11 +594,30 @@ class AdpApiClient:
         return output
 
     def __enter__(self):
-        """Context manager entry."""
+        """Context manager entry.
+
+        Returns:
+            Self, allowing the client to be used in a with statement.
+
+        Example:
+            >>> with AdpApiClient(credentials) as client:
+            ...     workers = client.call_endpoint("/hr/v2/workers")
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit - cleanup session."""
+        """Context manager exit - cleanup session.
+
+        Closes the underlying HTTP session to release resources.
+
+        Args:
+            exc_type: Exception type if an exception occurred
+            exc_val: Exception value if an exception occurred
+            exc_tb: Exception traceback if an exception occurred
+
+        Returns:
+            False to propagate any exception that occurred
+        """
         self.session.close()
         logger.debug("Session closed")
         return False

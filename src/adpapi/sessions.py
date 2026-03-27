@@ -88,7 +88,7 @@ class ApiSession:
         response = request_fn(url, **kwargs)
 
         if not response.ok:
-            #* Safely extract body, ADP sometimes returns empty bodies on errors
+            # * Safely extract body, ADP sometimes returns empty bodies on errors
             try:
                 body = response.json()
                 body_str = json.dumps(body, indent=2)
