@@ -255,7 +255,7 @@ class AdpApiClient:
 
         if not (starts_with_base or starts_with_path):
             logger.error(f"Incorrect Endpoint Received {endpoint}")
-            raise ValueError(f"Incorrect Endpoint Received: {endpoint}")
+            raise ValueError(f"Incorrect Endpoint Received: {endpoint}. Endpoints must either start with `/` or with {self.base_url}.")
 
         if starts_with_base:
             endpoint = endpoint.split(self.base_url)[1]
